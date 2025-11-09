@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Underground.fm</title>
-<script type="text/javascript" nonce="be6d014fdc124790ba662814f0e" src="//local.adguard.org?ts=1757913793576&amp;type=content-script&amp;dmn=neocities.org&amp;url=https%3A%2F%2Fneocities.org%2Fsite_files%2Fdownload%2Fradio%2Fundergroundfm.html%3F_%3D1757915429137&amp;app=com.google.Chrome&amp;css=3&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="be6d014fdc124790ba662814f0e" src="//local.adguard.org?ts=1757913793576&amp;name=AdGuard%20Extra&amp;type=user-script"></script><link rel="stylesheet" href="underground.css">
+<!--<script type="text/javascript" nonce="be6d014fdc124790ba662814f0e" src="//local.adguard.org?ts=1757913793576&amp;type=content-script&amp;dmn=neocities.org&amp;url=https%3A%2F%2Fneocities.org%2Fsite_files%2Fdownload%2Fradio%2Fundergroundfm.html%3F_%3D1757915429137&amp;app=com.google.Chrome&amp;css=3&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script> --><script type="text/javascript" nonce="be6d014fdc124790ba662814f0e" src="//local.adguard.org?ts=1757913793576&amp;name=AdGuard%20Extra&amp;type=user-script"></script><link rel="stylesheet" href="underground.css">
 <style>
-
+/* global variables, for manipulation via JS */
 :root {
-  --skin-primary-color: #6ebf00;
-  --skin-gradient-color: #96bf55;
+  --skin-gradient-color: #6ebf00;
+  --skin-primary-color: #96bf55;
 }
 
 #wallpaper {
@@ -37,7 +37,7 @@
 }
 
 .window-header {
-  background: linear-gradient(to bottom, #96bf55 0%, #6ebf00 100%);
+  background: linear-gradient(to bottom, var(--skin-gradient-color) 0%, var(--skin-primary-color) 100%);
   color: #fff;
   padding: 6px;
   font-weight: bold;
@@ -85,7 +85,7 @@
   left: 0;
   width: 100%;
   height: 50px;
-  background: linear-gradient(to bottom, #96bf55 0%, #6ebf00 100%);
+  background: linear-gradient(to bottom, var(--skin-gradient-color) 0%, var(--skin-primary-color) 100%);
   display: flex;
   align-items: center;
   padding: 0 10px;
@@ -97,7 +97,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  background: linear-gradient(to bottom, #96bf55 0%, #6ebf00 100%);
+  background: linear-gradient(to bottom, var(--skin-gradient-color) 0%, var(--skin-primary-color) 100%);
   padding: 4px 6px;
   border-radius: 3px;
 }
@@ -196,6 +196,24 @@
   cursor: pointer;
 }
 
+#skin-list li {
+  background: linear-gradient(to bottom, #e0e0e0 0%, #c0c0c0 100%);
+  border: 2px solid #808080;
+  border-radius: 3px;
+  padding: 6px 12px;
+  font-family: "Tahoma", sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 1px 1px 0 #fff inset, -1px -1px 0 #404040 inset;
+  margin-right: 5px;
+  list-style-type: none;
+  width: 70%;
+}
+
+#skin-list li:hover {
+  background: linear-gradient(to bottom, #f0f0f0 0%, #d0d0d0 100%);
+}
+
 @media (max-width: 500px) {
   .speaker-icon { width: 24px; height: 24px; }
   .volume-popup { width: 120px; padding: 8px; }
@@ -273,12 +291,7 @@
 <div class="window-box" id="skin-selector-box" style="display:none; top: 150px; left: 150px;">
   <div class="window-header" id="skin-selector-header">Skins</div>
   <div class="window-content" id="skin-selector-content">
-      <ul>
-        <li>Wired Lime</li>
-        <li>Terminal Tulip</li>
-        <li>Take Cover</li>
-        <li>Mosh Pit</li>
-        <li>Uranium Junkyard</li>
+      <ul id="skin-list">
       </ul>
   </div>
 </div>
@@ -379,6 +392,38 @@ document.querySelectorAll(".window-header").forEach(( header ) => {
 
   document.addEventListener("mouseup", () => { isDragging = false; });
 })
+
+// -------- skin selector logic --------
+const skinDictionary = {
+  // format:
+  // "Skin Name": ["PRIMARY COLOR", "GRADIENT COLOR"]
+  "Wired Lime": ["#6ebf00", "#96bf55"],
+  "Terminal Tulip": ['#ff5b5b', '#676767'],
+  "Take Cover": ["#40713b", "#34552d"],
+  "Mosh Pit": ["#000000", "#2f2f2f"],
+  "Uranium Junkyard": ["#555555", "#f8f861"]
+}
+
+function changeSkin(newSkinData) {
+  console.log("function called");
+  document.querySelector(':root').style.setProperty('--skin-primary-color', newSkinData[0]);
+  document.querySelector(':root').style.setProperty('--skin-gradient-color', newSkinData[1]);
+}
+
+const skinList = document.getElementById("skin-list")
+for (let skin in skinDictionary) {
+  console.log("skin: " + skin)
+  console.log("dict[skin]: " + skinDictionary[skin])
+  let skinEntry = document.createElement("li");
+  let skinText = document.createElement("p");
+  skinText.innerHTML = skin;
+  skinEntry.appendChild(skinText);
+  skinList.appendChild(skinEntry);
+  skinEntry.addEventListener('mouseover', () => { skinText.style.color = "#ffffff"; });
+  skinEntry.addEventListener('mouseleave', () => { skinText.style.color = "#000000"; });
+  skinEntry.addEventListener('mousedown', (e) => { changeSkin(skinDictionary[skin]); });
+}
+
 
 // -------- dynamic loading of images into gallery --------
 const galleryImages = galleryBox.querySelectorAll('img');
