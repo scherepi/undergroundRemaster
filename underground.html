@@ -292,6 +292,7 @@
 </div>
 
 <script>
+// -------- DOM identifications --------
 const audio = document.getElementById('audio');
 const playBtn = document.getElementById('play-btn');
 const pauseBtn = document.getElementById('pause-btn');
@@ -308,12 +309,14 @@ const discordButton = document.getElementById('discord-button');
 const discordBox = document.getElementById('discord-box');
 const wallpaper = document.getElementById('wallpaper');
 
+// -------- playback controls --------
 playBtn.addEventListener('click', () => audio.play());
 pauseBtn.addEventListener('click', () => audio.pause());
 
 audio.volume = volumeSlider.value;
 volumeSlider.addEventListener('input', () => audio.volume = volumeSlider.value);
 
+// -------- window triggers --------
 speakerIcon.addEventListener('click', e => {
   e.stopPropagation();
   volumePopup.style.display = volumePopup.style.display === 'block' ? 'none' : 'block';
@@ -339,6 +342,7 @@ discordButton.addEventListener('click', e => {
   discordBox.style.display = discordBox.style.display === 'block' ? 'none' : 'block';
 });
 
+// -------- window hide triggers --------
 document.addEventListener('click', e => {
   if (!volumePopup.contains(e.target) && e.target !== speakerIcon) volumePopup.style.display = 'none';
   if (!startMenu.contains(e.target) && e.target !== startButton) startMenu.style.display = 'none';
@@ -346,6 +350,7 @@ document.addEventListener('click', e => {
   if (!discordBox.contains(e.target) && e.target !== discordButton) discordBox.style.display = 'none';
 });
 
+// -------- drag-and-drop logic for windows --------
 document.querySelectorAll(".window-header").forEach(( header ) => {
   const elementBox = header.parentElement;
   let isDragging=false, startX=0, startY=0, origX=0, origY=0;
@@ -375,6 +380,7 @@ document.querySelectorAll(".window-header").forEach(( header ) => {
   document.addEventListener("mouseup", () => { isDragging = false; });
 })
 
+// -------- dynamic loading of images into gallery --------
 const galleryImages = galleryBox.querySelectorAll('img');
 galleryImages.forEach(img => {
   img.addEventListener('click', () => {
