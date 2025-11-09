@@ -6,6 +6,12 @@
 <title>Underground.fm</title>
 <script type="text/javascript" nonce="be6d014fdc124790ba662814f0e" src="//local.adguard.org?ts=1757913793576&amp;type=content-script&amp;dmn=neocities.org&amp;url=https%3A%2F%2Fneocities.org%2Fsite_files%2Fdownload%2Fradio%2Fundergroundfm.html%3F_%3D1757915429137&amp;app=com.google.Chrome&amp;css=3&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="be6d014fdc124790ba662814f0e" src="//local.adguard.org?ts=1757913793576&amp;name=AdGuard%20Extra&amp;type=user-script"></script><link rel="stylesheet" href="underground.css">
 <style>
+
+:root {
+  --skin-primary-color: #6ebf00;
+  --skin-gradient-color: #96bf55;
+}
+
 #wallpaper {
   position: fixed;
   top: 0;
@@ -17,7 +23,7 @@
   z-index: -1;
 }
 
-.player-box, .gallery-box, .discord-box {
+.window-box {
   width: 300px;
   background: #c0c0c0;
   border: 2px solid #808080;
@@ -30,7 +36,7 @@
   z-index: 1000;
 }
 
-.player-header, .gallery-header, .discord-header {
+.window-header {
   background: linear-gradient(to bottom, #96bf55 0%, #6ebf00 100%);
   color: #fff;
   padding: 6px;
@@ -39,7 +45,7 @@
   border-bottom: 2px solid #000080;
 }
 
-.player-content, .gallery-content, .discord-content {
+.window-content {
   padding: 10px;
 }
 
@@ -96,7 +102,7 @@
   border-radius: 3px;
 }
 
-.start-button, .gallery-button, .discord-button {
+.window-button {
   width: 44px;
   height: 44px;
   cursor: pointer;
@@ -104,7 +110,7 @@
   align-items: center;
   justify-content: center;
 }
-.start-button img, .gallery-button img, .discord-button img {
+.window-button img {
   max-width: 90%;
   max-height: 90%;
 }
@@ -202,9 +208,9 @@
 <div id="wallpaper"></div>
 
 <main class="player-container">
-  <div class="player-box" id="player-box">
-    <div class="player-header">/pr/underground/uplink.exe</div>
-    <div class="player-content">
+  <div class="window-box" id="player-box">
+    <div class="window-header" id="player-header">/pr/underground/uplink.exe</div>
+    <div class="window-content" id="player-content">
       <div class="now-playing">
         <h2>Underground.fm Player</h2>
         <p class="now-playing-message">>Check Discord for current song playing or to submit songs!</p>
@@ -224,13 +230,13 @@
 
 <div class="taskbar">
   <div class="icon-container">
-    <div class="start-button" id="start-button">
+    <div class="window-button" id="start-button">
       <img src="https://projectradio.org/R-Transparent.png" alt="Start Logo">
     </div>
-    <div class="gallery-button" id="gallery-button">
+    <div class="window-button" id="gallery-button">
       <img src="https://projectradio.org/radio/RjMRqmK.png" alt="Gallery Icon">
     </div>
-    <div class="discord-button" id="discord-button">
+    <div class="window-button" id="discord-button">
       <img src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/41611b21-a7ce-419b-bc77-4644f8105930/dek5r4f-2a6c12b8-588e-4224-b723-62d328f3a77c.png/v1/fill/w_894,h_894/3d_discord_icon_by_therprtnetwork_dek5r4f-pre.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTAwMCIsInBhdGgiOiJcL2ZcLzQxNjExYjIxLWE3Y2UtNDE5Yi1iYzc3LTQ2NDRmODEwNTkzMFwvZGVrNXI0Zi0yYTZjMTJiOC01ODhlLTQyMjQtYjcyMy02MmQzMjhmM2E3N2MucG5nIiwid2lkdGgiOiI8PTEwMDAifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.LGtFaLbHGgh-_ZF0i_vwjb1DZn5WrwnVYEDEGIslJqQ" alt="Discord Icon">
     </div>
   </div>
@@ -250,9 +256,9 @@
   </ul>
 </div>
 
-<div class="gallery-box" id="gallery-box" style="display:none; top:100px; left:100px;">
-  <div class="gallery-header">Gallery</div>
-  <div class="gallery-content">
+<div class="window-box" id="gallery-box" style="display:none; top:100px; left:100px;">
+  <div class="window-header" id="gallery-header">Gallery</div>
+  <div class="window-content" id="gallery-content">
         <img src="https://projectradio.org/DRAINPAPER.PNG" alt="Sample5">
         <img src="https://projectradio.org/radio/PRwallpaper2024.png" alt="Sample3">
         <img src="https://projectradio.org/PROJECTR.jpg" alt="Sample2">
@@ -261,9 +267,22 @@
   </div>
 </div>
 
-<div class="discord-box" id="discord-box" style="display:none; top:150px; left:150px;">
-  <div class="discord-header">Discord</div>
-  <div class="discord-content">
+<div class="window-box" id="skin-selector-box" style="display:none; top: 150px; left: 150px;">
+  <div class="window-header" id="skin-selector-header">Skins</div>
+  <div class="window-content" id="skin-selector-content">
+      <ul>
+        <li>Wired Lime</li>
+        <li>Terminal Tulip</li>
+        <li>Take Cover</li>
+        <li>Mosh Pit</li>
+        <li>Uranium Junkyard</li>
+      </ul>
+  </div>
+</div>
+
+<div class="window-box" id="discord-box" style="display:none; top:200px; left:200px;">
+  <div class="window-header" id="discord-header">Discord</div>
+  <div class="window-content" id="discord-content">
     <p>Join our community on Discord:</p>
     <a href="https://discord.gg/qUFrxKxchg" target="_blank">Click here to join</a>
   </div>
