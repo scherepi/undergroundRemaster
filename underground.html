@@ -184,12 +184,12 @@
   color: #fff;
 }
 
-.gallery-content {
+#gallery-content {
   display: flex;
   overflow-x: auto;
   gap: 5px;
 }
-.gallery-content img {
+#gallery-content img {
   max-height: 150px;
   border: 1px solid #808080;
   border-radius: 3px;
@@ -235,6 +235,9 @@
     </div>
     <div class="window-button" id="gallery-button">
       <img src="https://projectradio.org/radio/RjMRqmK.png" alt="Gallery Icon">
+    </div>
+    <div class="window-button" id="skin-selector-button">
+      <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwinaero.com%2Fblog%2Fwp-content%2Fuploads%2F2019%2F05%2FMicrosoft-Paint-icon-big-256.png&f=1&nofb=1&ipt=bbe778048491c3b87b6c9b8508b070d1212eafe7cc945d504044b4d8cfce6121" alt="Skin Selector">
     </div>
     <div class="window-button" id="discord-button">
       <img src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/41611b21-a7ce-419b-bc77-4644f8105930/dek5r4f-2a6c12b8-588e-4224-b723-62d328f3a77c.png/v1/fill/w_894,h_894/3d_discord_icon_by_therprtnetwork_dek5r4f-pre.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTAwMCIsInBhdGgiOiJcL2ZcLzQxNjExYjIxLWE3Y2UtNDE5Yi1iYzc3LTQ2NDRmODEwNTkzMFwvZGVrNXI0Zi0yYTZjMTJiOC01ODhlLTQyMjQtYjcyMy02MmQzMjhmM2E3N2MucG5nIiwid2lkdGgiOiI8PTEwMDAifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.LGtFaLbHGgh-_ZF0i_vwjb1DZn5WrwnVYEDEGIslJqQ" alt="Discord Icon">
@@ -299,6 +302,8 @@ const startButton = document.getElementById('start-button');
 const startMenu = document.getElementById('start-menu');
 const galleryButton = document.getElementById('gallery-button');
 const galleryBox = document.getElementById('gallery-box');
+const skinButton = document.getElementById('skin-selector-button');
+const skinBox = document.getElementById('skin-selector-box');
 const discordButton = document.getElementById('discord-button');
 const discordBox = document.getElementById('discord-box');
 const wallpaper = document.getElementById('wallpaper');
@@ -324,6 +329,11 @@ galleryButton.addEventListener('click', e => {
   galleryBox.style.display = galleryBox.style.display === 'block' ? 'none' : 'block';
 });
 
+skinButton.addEventListener('click', e => {
+  e.stopPropagation();
+  skinBox.style.display = skinBox.style.display === "block" ? 'none' : 'block';
+})
+
 discordButton.addEventListener('click', e => {
   e.stopPropagation();
   discordBox.style.display = discordBox.style.display === 'block' ? 'none' : 'block';
@@ -336,39 +346,34 @@ document.addEventListener('click', e => {
   if (!discordBox.contains(e.target) && e.target !== discordButton) discordBox.style.display = 'none';
 });
 
-function makeDraggable(box, headerClass) {
-  const boxEl = document.getElementById(box);
-  const header = boxEl.querySelector(headerClass);
+document.querySelectorAll(".window-header").forEach(( header ) => {
+  const elementBox = header.parentElement;
   let isDragging=false, startX=0, startY=0, origX=0, origY=0;
 
-  header.addEventListener('mousedown', e=>{
-    isDragging=true;
-    startX=e.clientX; startY=e.clientY;
-    const rect=boxEl.getBoundingClientRect();
-    origX=rect.left; origY=rect.top;
-    boxEl.style.position='absolute'; boxEl.style.zIndex=1000; boxEl.style.margin=0;
+  header.addEventListener('mousedown', e =>{
+    isDragging = true;
+    startX = e.clientX; startY = e.clientY;
+    const rect = elementBox.getBoundingClientRect();
+    origX = rect.left; origY = rect.top;
+    elementBox.style.position='absolute'; elementBox.style.zIndex=1000; elementBox.style.margin=0;
   });
 
-  document.addEventListener('mousemove', e=>{
+  document.addEventListener('mousemove', e =>{
     if(!isDragging) return;
-    let dx=e.clientX-startX, dy=e.clientY-startY;
-    let newLeft=origX+dx, newTop=origY+dy;
-    const rect=boxEl.getBoundingClientRect();
-    const windowWidth=window.innerWidth, windowHeight=window.innerHeight;
-    if(newLeft<0)newLeft=0;
-    if(newTop<0)newTop=0;
-    if(newLeft+rect.width>windowWidth)newLeft=windowWidth-rect.width;
-    if(newTop+rect.height>windowHeight)newTop=windowHeight-rect.height;
-    boxEl.style.left=newLeft+'px';
-    boxEl.style.top=newTop+'px';
+    let dx = e.clientX - startX, dy = e.clientY - startY;
+    let newLeft = origX + dx, newTop = origY + dy;
+    const rect = elementBox.getBoundingClientRect();
+    const windowWidth = window.innerWidth, windowHeight = window.innerHeight;
+    if (newLeft < 0) newLeft = 0;
+    if (newTop < 0) newTop = 0;
+    if (newLeft + rect.width > windowWidth) newLeft = windowWidth - rect.width;
+    if(newTop + rect.height > windowHeight) newTop = windowHeight - rect.height;
+    elementBox.style.left = newLeft+'px';
+    elementBox.style.top = newTop+'px';
   });
 
-  document.addEventListener('mouseup',()=>{isDragging=false;});
-}
-
-makeDraggable('player-box', '.player-header');
-makeDraggable('gallery-box', '.gallery-header');
-makeDraggable('discord-box', '.discord-header');
+  document.addEventListener("mouseup", () => { isDragging = false; });
+})
 
 const galleryImages = galleryBox.querySelectorAll('img');
 galleryImages.forEach(img => {
