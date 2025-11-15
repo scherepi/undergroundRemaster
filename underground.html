@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Underground.fm</title>
-<!--<script type="text/javascript" nonce="be6d014fdc124790ba662814f0e" src="//local.adguard.org?ts=1757913793576&amp;type=content-script&amp;dmn=neocities.org&amp;url=https%3A%2F%2Fneocities.org%2Fsite_files%2Fdownload%2Fradio%2Fundergroundfm.html%3F_%3D1757915429137&amp;app=com.google.Chrome&amp;css=3&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script> --><script type="text/javascript" nonce="be6d014fdc124790ba662814f0e" src="//local.adguard.org?ts=1757913793576&amp;name=AdGuard%20Extra&amp;type=user-script"></script><link rel="stylesheet" href="underground.css">
 <style>
 /* global variables, for manipulation via JS */
 :root {
@@ -214,6 +213,36 @@
   background: linear-gradient(to bottom, #f0f0f0 0%, #d0d0d0 100%);
 }
 
+#custom-skin-button {
+  background: linear-gradient(to bottom, #e0e0e0 0%, #c0c0c0 100%);
+  border: 2px solid #808080;
+  border-radius: 3px;
+  padding: 6px 12px;
+  text-align: center;
+}
+
+#custom-skin-button:hover {
+  background: linear-gradient(to bottom, #f0f0f0 0%, #d0d0d0 100%);
+  cursor: pointer;
+}
+
+#custom-skin-create {
+  position: absolute;
+  right: 3%;
+  top: 53%;
+  background: linear-gradient(to bottom, #e0e0e0 0%, #c0c0c0 100%);
+  border: 2px solid #808080;
+  border-radius: 3px;
+  padding: 2px 3px;
+  text-align: center;
+}
+
+#custom-skin-create:hover {
+  background: linear-gradient(to bottom, #f0f0f0 0%, #d0d0d0 100%);
+  cursor: pointer;
+  font-style: italic;
+}
+
 @media (max-width: 500px) {
   .speaker-icon { width: 24px; height: 24px; }
   .volume-popup { width: 120px; padding: 8px; }
@@ -293,6 +322,17 @@
   <div class="window-content" id="skin-selector-content">
       <ul id="skin-list">
       </ul>
+      <div id="custom-skin-button">Make your own!</div>
+  </div>
+</div>
+
+<div class="window-box" id="custom-skin-box" style="display:none; top: 150px; left: 150px;">
+  <div class="window-header" id="custom-skin-header">Custom Skin</div>
+  <div class="window-content" id="custom-skin-content">
+    <input type="text" id="custom-skin-name" placeholder="Tribal Drums">
+    <input type="text" id="custom-skin-primary" placeholder="HEX 0 (ex #111111)">
+    <input type="text" id="custom-skin-secondary" placeholder="HEX 1">
+    <div id="custom-skin-create">SKIN MY SHIT</div>
   </div>
 </div>
 
@@ -318,6 +358,8 @@ const galleryButton = document.getElementById('gallery-button');
 const galleryBox = document.getElementById('gallery-box');
 const skinButton = document.getElementById('skin-selector-button');
 const skinBox = document.getElementById('skin-selector-box');
+const customSkinButton = document.getElementById('custom-skin-button');
+const customSkinBox = document.getElementById('custom-skin-box')
 const discordButton = document.getElementById('discord-button');
 const discordBox = document.getElementById('discord-box');
 const wallpaper = document.getElementById('wallpaper');
@@ -348,6 +390,11 @@ galleryButton.addEventListener('click', e => {
 skinButton.addEventListener('click', e => {
   e.stopPropagation();
   skinBox.style.display = skinBox.style.display === "block" ? 'none' : 'block';
+})
+
+customSkinButton.addEventListener('click', e => {
+  e.stopPropagation();
+  customSkinBox.style.display = customSkinBox.style.display === "block" ? "none" : "block";
 })
 
 discordButton.addEventListener('click', e => {
@@ -394,7 +441,7 @@ document.querySelectorAll(".window-header").forEach(( header ) => {
 })
 
 // -------- skin selector logic --------
-const skinDictionary = {
+let skinDictionary = {
   // format:
   // "Skin Name": ["PRIMARY COLOR", "GRADIENT COLOR"]
   "Wired Lime": ["#6ebf00", "#96bf55"],
@@ -412,8 +459,6 @@ function changeSkin(newSkinData) {
 
 const skinList = document.getElementById("skin-list")
 for (let skin in skinDictionary) {
-  console.log("skin: " + skin)
-  console.log("dict[skin]: " + skinDictionary[skin])
   let skinEntry = document.createElement("li");
   let skinText = document.createElement("p");
   skinText.innerHTML = skin;
@@ -424,6 +469,31 @@ for (let skin in skinDictionary) {
   skinEntry.addEventListener('mousedown', (e) => { changeSkin(skinDictionary[skin]); });
 }
 
+// -------- custom skin window logic --------
+function validateHex(hexString) {
+  const hexPattern = /^#?([a-f0-9]{6}|[a-f0-9]{3})$/i // thanks github i think
+  // takes a given string and makes sure it's a valid hex code
+  return hexPattern.test(hexString);
+}
+
+function addSkin() {
+  let newSkinName = document.getElementById("custom-skin-name").value
+  let skinHex0 = document.getElementById("custom-skin-primary").value
+  let skinHex1 = document.getElementById("custom-skin-secondary").value
+  if (newSkinName.length == 0 || !(validateHex(skinHex0)) || !(validateHex(skinHex1))) return;
+  
+  let skinEntry = document.createElement("li");
+  let skinText = document.createElement("p");
+  skinText.innerHTML = newSkinName; // this would NOT BE A GOOD IDEA if it weren't for the fact that everything is client-side.
+  skinDictionary[newSkinName] = [skinHex0, skinHex1];
+  skinEntry.appendChild(skinText);
+  skinList.appendChild(skinEntry);
+  skinEntry.addEventListener('mouseover', () => { skinText.style.color = "#ffffff"; });
+  skinEntry.addEventListener('mouseleave', () => { skinText.style.color = "#000000"; });
+  skinEntry.addEventListener('mousedown', (e) => { changeSkin(skinDictionary[newSkinName]); });
+}
+
+document.getElementById("custom-skin-create").addEventListener('mousedown', (e) => { addSkin() });
 
 // -------- dynamic loading of images into gallery --------
 const galleryImages = galleryBox.querySelectorAll('img');
