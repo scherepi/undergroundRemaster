@@ -470,6 +470,9 @@ for (let skin in skinDictionary) {
 }
 
 // -------- custom skin window logic --------
+let skinNameElement = document.getElementById("custom-skin-name");
+let hex0Element = document.getElementById("custom-skin-primary");
+let hex1Element = document.getElementById("custom-skin-secondary");
 function validateHex(hexString) {
   const hexPattern = /^#?([a-f0-9]{6}|[a-f0-9]{3})$/i // thanks github i think
   // takes a given string and makes sure it's a valid hex code
@@ -477,10 +480,11 @@ function validateHex(hexString) {
 }
 
 function addSkin() {
-  let newSkinName = document.getElementById("custom-skin-name").value
-  let skinHex0 = document.getElementById("custom-skin-primary").value
-  let skinHex1 = document.getElementById("custom-skin-secondary").value
+  let newSkinName = skinNameElement.value
+  let skinHex0 = hex0Element.value
+  let skinHex1 = hex1Element.value
   if (newSkinName.length == 0 || !(validateHex(skinHex0)) || !(validateHex(skinHex1))) return;
+
   
   let skinEntry = document.createElement("li");
   let skinText = document.createElement("p");
@@ -494,6 +498,18 @@ function addSkin() {
 }
 
 document.getElementById("custom-skin-create").addEventListener('mousedown', (e) => { addSkin() });
+
+skinNameElement.addEventListener('blur', (e) => {
+  skinNameElement.value.length < 1 ? skinNameElement.style.backgroundColor = '#e09191' : skinNameElement.style.backgroundColor = '#ffffff';
+})
+
+hex0Element.addEventListener('blur', (e) => {
+  !(validateHex(hex0Element.value)) ? hex0Element.style.backgroundColor = '#e09191' : hex0Element.style.backgroundColor = '#ffffff';
+})
+
+hex1Element.addEventListener('blur', (e) => {
+  !(validateHex(hex1Element.value)) ? hex1Element.style.backgroundColor = '#e09191' : hex1Element.style.backgroundColor = '#ffffff';
+})
 
 // -------- dynamic loading of images into gallery --------
 const galleryImages = galleryBox.querySelectorAll('img');
