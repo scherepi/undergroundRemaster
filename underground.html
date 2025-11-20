@@ -518,15 +518,38 @@
       skinEntry.addEventListener('mousedown', (e) => { changeSkin(skinDictionary[skin]); });
     }
 
-    // -------- custom skin window logic --------
-    let skinNameElement = document.getElementById("custom-skin-name");
-    let hex0Element = document.getElementById("custom-skin-primary");
-    let hex1Element = document.getElementById("custom-skin-secondary");
-    function validateHex(hexString) {
-      const hexPattern = /^#?([a-f0-9]{6}|[a-f0-9]{3})$/i // thanks github i think
-      // takes a given string and makes sure it's a valid hex code
-      return hexPattern.test(hexString);
+// -------- custom skin window logic --------
+let customSkinDictionary = undefined; // we need to load in values if they already exist
+// check LocalStorage for the custom skin dictionary and load it if it exists
+if (storageAvailable("localStorage")) {
+  if (localStorage.getItem("customSkins")) {
+    customSkinDictionary = JSON.parse(localStorage.getItem("customSkins"));
+    for (let skin in customSkinDictionary) {
+      let skinEntry = document.createElement("li");
+      let skinText = document.createElement("p");
+      skinText.innerHTML = skin;
+      skinEntry.appendChild(skinText);
+      skinList.appendChild(skinEntry);
+      skinEntry.addEventListener('mouseover', () => { skinText.style.color = "#ffffff"; });
+      skinEntry.addEventListener('mouseleave', () => { skinText.style.color = "#000000"; });
+      skinEntry.addEventListener('mousedown', (e) => { changeSkin(skinDictionary[skin]); });
     }
+  } else {
+    console.log("didn't find any custom skins already saved in the browser. that's fine, we can just make a blank dictionary");
+    customSkinDictionary = {};
+  }
+} else {
+  console.log("uh oh... something went wrong trying to access browser's LocalStorage. making a new custom skin dictionary, but skins won't save.")
+  customSkinDictionary = {};
+}
+let skinNameElement = document.getElementById("custom-skin-name");
+let hex0Element = document.getElementById("custom-skin-primary");
+let hex1Element = document.getElementById("custom-skin-secondary");
+function validateHex(hexString) {
+  const hexPattern = /^#?([a-f0-9]{6}|[a-f0-9]{3})$/i // thanks github i think
+  // takes a given string and makes sure it's a valid hex code
+  return hexPattern.test(hexString);
+}
 
     function addSkin() {
       let newSkinName = skinNameElement.value
@@ -534,17 +557,23 @@
       let skinHex1 = hex1Element.value
       if (newSkinName.length == 0 || !(validateHex(skinHex0)) || !(validateHex(skinHex1))) return;
 
-
-      let skinEntry = document.createElement("li");
-      let skinText = document.createElement("p");
-      skinText.innerHTML = newSkinName; // this would NOT BE A GOOD IDEA if it weren't for the fact that everything is client-side.
-      skinDictionary[newSkinName] = [skinHex0, skinHex1];
-      skinEntry.appendChild(skinText);
-      skinList.appendChild(skinEntry);
-      skinEntry.addEventListener('mouseover', () => { skinText.style.color = "#ffffff"; });
-      skinEntry.addEventListener('mouseleave', () => { skinText.style.color = "#000000"; });
-      skinEntry.addEventListener('mousedown', (e) => { changeSkin(skinDictionary[newSkinName]); });
+  if (customSkinDictionary[newSkinName]) { return; } else { 
+    customSkinDictionary[newSkinName] = [skinHex0, skinHex1]; 
+    if (storageAvailable("localStorage")) {
+      localStorage.setItem("customSkins", JSON.stringify(customSkinDictionary));
     }
+  }
+
+  let skinEntry = document.createElement("li");
+  let skinText = document.createElement("p");
+  skinText.innerHTML = newSkinName; // this would NOT BE A GOOD IDEA if it weren't for the fact that everything is client-side.
+  skinDictionary[newSkinName] = [skinHex0, skinHex1];
+  skinEntry.appendChild(skinText);
+  skinList.appendChild(skinEntry);
+  skinEntry.addEventListener('mouseover', () => { skinText.style.color = "#ffffff"; });
+  skinEntry.addEventListener('mouseleave', () => { skinText.style.color = "#000000"; });
+  skinEntry.addEventListener('mousedown', (e) => { changeSkin(skinDictionary[newSkinName]); });
+}
 
     document.getElementById("custom-skin-create").addEventListener('mousedown', (e) => { addSkin() });
 
@@ -571,15 +600,36 @@
       }
     }
 
-    // -------- dynamic loading of images into gallery --------
-    const galleryImages = galleryBox.querySelectorAll('img');
-    galleryImages.forEach(img => {
-      img.addEventListener('click', () => {
-        wallpaper.style.background = `#000 url(${img.src}) no-repeat center center`;
-        wallpaper.style.backgroundSize = "100% 100%"; // 🔄 stretch to fit
-      });
-    });
-  </script>
+// -------- dynamic loading of images into gallery --------
+const galleryImages = galleryBox.querySelectorAll('img');
+galleryImages.forEach(img => {
+  img.addEventListener('click', () => {
+    wallpaper.style.background = `#000 url(${img.src}) no-repeat center center`;
+    wallpaper.style.backgroundSize = "100% 100%"; // 🔄 stretch to fit
+  });
+});
+
+// -------- template external code --------
+// example check function for LocalStorage as found on https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API#feature-detecting_localstorage
+function storageAvailable(type) {
+  let storage;
+  try {
+    storage = window[type];
+    const x = "__storage_test__";
+    storage.setItem(x, x);
+    storage.removeItem(x);
+    return true;
+  } catch (e) {
+    return (
+      e instanceof DOMException &&
+      e.name === "QuotaExceededError" &&
+      // acknowledge QuotaExceededError only if there's something already stored
+      storage &&
+      storage.length !== 0
+    );
+  }
+}
+</script>
 
 </body>
 
