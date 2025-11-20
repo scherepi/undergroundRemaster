@@ -1,473 +1,512 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Underground.fm</title>
-<style>
-/* global variables, for manipulation via JS */
-:root {
-  --skin-gradient-color: #6ebf00;
-  --skin-primary-color: #96bf55;
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Underground.fm</title>
+  <style>
+    /* global variables, for manipulation via JS */
+    :root {
+      --skin-gradient-color: #6ebf00;
+      --skin-primary-color: #96bf55;
+      --preview-gradient-color: #f0f0f0;
+      --preview-primary-color: #d0d0d0;
+    }
 
-#wallpaper {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: #000 url('https://projectradio.org/DRAINPAPER.PNG') no-repeat center center;
-  background-size: 100% 100%; /* 🔄 stretch to fit */
-  z-index: -1;
-}
+    #wallpaper {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000 url('https://projectradio.org/DRAINPAPER.PNG') no-repeat center center;
+      background-size: 100% 100%;
+      /* 🔄 stretch to fit */
+      z-index: -1;
+    }
 
-.window-box {
-  width: 300px;
-  background: #c0c0c0;
-  border: 2px solid #808080;
-  border-radius: 4px;
-  position: absolute;
-  top: 50px;
-  left: 50px;
-  box-shadow: 2px 2px 0 #fff inset, -2px -2px 0 #404040 inset;
-  font-family: Tahoma, sans-serif;
-  z-index: 1000;
-}
+    .window-box {
+      width: 300px;
+      background: #c0c0c0;
+      border: 2px solid #808080;
+      border-radius: 4px;
+      position: absolute;
+      top: 50px;
+      left: 50px;
+      box-shadow: 2px 2px 0 #fff inset, -2px -2px 0 #404040 inset;
+      font-family: Tahoma, sans-serif;
+      z-index: 1000;
+    }
 
-.window-header {
-  background: linear-gradient(to bottom, var(--skin-gradient-color) 0%, var(--skin-primary-color) 100%);
-  color: #fff;
-  padding: 6px;
-  font-weight: bold;
-  cursor: move;
-  border-bottom: 2px solid #000080;
-}
+    .window-header {
+      background: linear-gradient(to bottom, var(--skin-gradient-color) 0%, var(--skin-primary-color) 100%);
+      color: #fff;
+      padding: 6px;
+      font-weight: bold;
+      cursor: move;
+      border-bottom: 2px solid #000080;
+    }
 
-.window-content {
-  padding: 10px;
-}
+    .window-content {
+      padding: 10px;
+    }
 
-.now-playing h2 {
-  margin: 0 0 5px 0;
-  font-size: 16px;
-}
+    .now-playing h2 {
+      margin: 0 0 5px 0;
+      font-size: 16px;
+    }
 
-.now-playing-message {
-  font-size: 14px;
-  color: #333;
-}
+    .now-playing-message {
+      font-size: 14px;
+      color: #333;
+    }
 
-.controls button {
-  background: linear-gradient(to bottom, #e0e0e0 0%, #c0c0c0 100%);
-  border: 2px solid #808080;
-  border-radius: 3px;
-  padding: 6px 12px;
-  font-family: "Tahoma", sans-serif;
-  font-size: 14px;
-  cursor: pointer;
-  box-shadow: 1px 1px 0 #fff inset, -1px -1px 0 #404040 inset;
-  margin-right: 5px;
-}
+    .controls button {
+      background: linear-gradient(to bottom, #e0e0e0 0%, #c0c0c0 100%);
+      border: 2px solid #808080;
+      border-radius: 3px;
+      padding: 6px 12px;
+      font-family: "Tahoma", sans-serif;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 1px 1px 0 #fff inset, -1px -1px 0 #404040 inset;
+      margin-right: 5px;
+    }
 
-.controls button:hover {
-  background: linear-gradient(to bottom, #f0f0f0 0%, #d0d0d0 100%);
-}
+    .controls button:hover {
+      background: linear-gradient(to bottom, #f0f0f0 0%, #d0d0d0 100%);
+    }
 
-.controls button:active {
-  box-shadow: inset 1px 1px 0 #404040, inset -1px -1px 0 #fff;
-}
+    .controls button:active {
+      box-shadow: inset 1px 1px 0 #404040, inset -1px -1px 0 #fff;
+    }
 
-.taskbar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 50px;
-  background: linear-gradient(to bottom, var(--skin-gradient-color) 0%, var(--skin-primary-color) 100%);
-  display: flex;
-  align-items: center;
-  padding: 0 10px;
-  z-index: 1000;
-  justify-content: space-between;
-}
+    .taskbar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 50px;
+      background: linear-gradient(to bottom, var(--skin-gradient-color) 0%, var(--skin-primary-color) 100%);
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      z-index: 1000;
+      justify-content: space-between;
+    }
 
-.icon-container {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: linear-gradient(to bottom, var(--skin-gradient-color) 0%, var(--skin-primary-color) 100%);
-  padding: 4px 6px;
-  border-radius: 3px;
-}
+    .icon-container {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(to bottom, var(--skin-gradient-color) 0%, var(--skin-primary-color) 100%);
+      padding: 4px 6px;
+      border-radius: 3px;
+    }
 
-.window-button {
-  width: 44px;
-  height: 44px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.window-button img {
-  max-width: 90%;
-  max-height: 90%;
-}
+    .window-button {
+      width: 44px;
+      height: 44px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-.speaker-icon {
-  width: 36px;
-  height: 36px;
-  background: url('https://projectradio.org/radio/Sound_Recorder_2001.webp') no-repeat center center;
-  background-size: contain;
-  cursor: pointer;
-  margin-right: 20px;
-  flex-shrink: 0;
-}
+    .window-button img {
+      max-width: 90%;
+      max-height: 90%;
+    }
 
-.volume-popup {
-  display: none;
-  position: fixed;
-  bottom: 55px;
-  right: 20px;
-  width: 140px;
-  background: #c0c0c0;
-  border: 2px solid #808080;
-  border-radius: 3px;
-  padding: 10px;
-  box-shadow: 1px 1px 0 #fff inset, -1px -1px 0 #404040 inset;
-  z-index: 2000;
-}
-.volume-arrow {
-  position: absolute;
-  bottom: -6px;
-  right: 10px;
-  width: 0;
-  height: 0;
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-top: 6px solid #c0c0c0;
-}
-.volume-popup input[type="range"] {
-  width: 100%;
-}
+    .speaker-icon {
+      width: 36px;
+      height: 36px;
+      background: url('https://projectradio.org/radio/Sound_Recorder_2001.webp') no-repeat center center;
+      background-size: contain;
+      cursor: pointer;
+      margin-right: 20px;
+      flex-shrink: 0;
+    }
 
-.start-menu {
-  display: none;
-  position: fixed;
-  bottom: 50px;
-  left: 0;
-  width: 200px;
-  background: #c0c0c0;
-  border: 2px solid #808080;
-  border-radius: 3px;
-  box-shadow: 2px 2px 0 #fff inset, -2px -2px 0 #404040 inset;
-  z-index: 1500;
-}
-.start-menu ul {
-  list-style: none;
-  padding: 10px;
-  margin: 0;
-}
-.start-menu li {
-  margin-bottom: 5px;
-}
-.start-menu li a {
-  text-decoration: none;
-  color: #000;
-  font-family: Tahoma, sans-serif;
-  display: block;
-  padding: 5px;
-}
-.start-menu li a:hover {
-  background: #0a64ad;
-  color: #fff;
-}
+    .volume-popup {
+      display: none;
+      position: fixed;
+      bottom: 55px;
+      right: 20px;
+      width: 140px;
+      background: #c0c0c0;
+      border: 2px solid #808080;
+      border-radius: 3px;
+      padding: 10px;
+      box-shadow: 1px 1px 0 #fff inset, -1px -1px 0 #404040 inset;
+      z-index: 2000;
+    }
 
-#gallery-content {
-  display: flex;
-  overflow-x: auto;
-  gap: 5px;
-}
-#gallery-content img {
-  max-height: 150px;
-  border: 1px solid #808080;
-  border-radius: 3px;
-  cursor: pointer;
-}
+    .volume-arrow {
+      position: absolute;
+      bottom: -6px;
+      right: 10px;
+      width: 0;
+      height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-top: 6px solid #c0c0c0;
+    }
 
-#skin-list li {
-  background: linear-gradient(to bottom, #e0e0e0 0%, #c0c0c0 100%);
-  border: 2px solid #808080;
-  border-radius: 3px;
-  padding: 6px 12px;
-  font-family: "Tahoma", sans-serif;
-  font-size: 14px;
-  cursor: pointer;
-  box-shadow: 1px 1px 0 #fff inset, -1px -1px 0 #404040 inset;
-  margin-right: 5px;
-  list-style-type: none;
-  width: 70%;
-}
+    .volume-popup input[type="range"] {
+      width: 100%;
+    }
 
-#skin-list li:hover {
-  background: linear-gradient(to bottom, #f0f0f0 0%, #d0d0d0 100%);
-}
+    .start-menu {
+      display: none;
+      position: fixed;
+      bottom: 50px;
+      left: 0;
+      width: 200px;
+      background: #c0c0c0;
+      border: 2px solid #808080;
+      border-radius: 3px;
+      box-shadow: 2px 2px 0 #fff inset, -2px -2px 0 #404040 inset;
+      z-index: 1500;
+    }
 
-#custom-skin-button {
-  background: linear-gradient(to bottom, #e0e0e0 0%, #c0c0c0 100%);
-  border: 2px solid #808080;
-  border-radius: 3px;
-  padding: 6px 12px;
-  text-align: center;
-}
+    .start-menu ul {
+      list-style: none;
+      padding: 10px;
+      margin: 0;
+    }
 
-#custom-skin-button:hover {
-  background: linear-gradient(to bottom, #f0f0f0 0%, #d0d0d0 100%);
-  cursor: pointer;
-}
+    .start-menu li {
+      margin-bottom: 5px;
+    }
 
-#custom-skin-create {
-  position: absolute;
-  right: 3%;
-  top: 53%;
-  background: linear-gradient(to bottom, #e0e0e0 0%, #c0c0c0 100%);
-  border: 2px solid #808080;
-  border-radius: 3px;
-  padding: 2px 3px;
-  text-align: center;
-}
+    .start-menu li a {
+      text-decoration: none;
+      color: #000;
+      font-family: Tahoma, sans-serif;
+      display: block;
+      padding: 5px;
+    }
 
-#custom-skin-create:hover {
-  background: linear-gradient(to bottom, #f0f0f0 0%, #d0d0d0 100%);
-  cursor: pointer;
-  font-style: italic;
-}
+    .start-menu li a:hover {
+      background: #0a64ad;
+      color: #fff;
+    }
 
-@media (max-width: 500px) {
-  .speaker-icon { width: 24px; height: 24px; }
-  .volume-popup { width: 120px; padding: 8px; }
-  .start-button, .gallery-button, .discord-button { width: 32px; height: 32px; }
-}
-</style>
+    #gallery-content {
+      display: flex;
+      overflow-x: auto;
+      gap: 5px;
+    }
+
+    #gallery-content img {
+      max-height: 150px;
+      border: 1px solid #808080;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+
+    #skin-list li {
+      background: linear-gradient(to bottom, #e0e0e0 0%, #c0c0c0 100%);
+      border: 2px solid #808080;
+      border-radius: 3px;
+      padding: 6px 12px;
+      font-family: "Tahoma", sans-serif;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 1px 1px 0 #fff inset, -1px -1px 0 #404040 inset;
+      margin-right: 5px;
+      list-style-type: none;
+      width: 70%;
+    }
+
+    #skin-list li:hover {
+      background: linear-gradient(to bottom, #f0f0f0 0%, #d0d0d0 100%);
+    }
+
+    #custom-skin-button {
+      background: linear-gradient(to bottom, #e0e0e0 0%, #c0c0c0 100%);
+      border: 2px solid #808080;
+      border-radius: 3px;
+      padding: 6px 12px;
+      text-align: center;
+    }
+
+    #custom-skin-button:hover {
+      background: linear-gradient(to bottom, #f0f0f0 0%, #d0d0d0 100%);
+      cursor: pointer;
+    }
+
+    #custom-skin-create {
+      position: absolute;
+      right: 3%;
+      top: 53%;
+      background: linear-gradient(to bottom, #e0e0e0 0%, #c0c0c0 100%);
+      border: 2px solid #808080;
+      border-radius: 3px;
+      padding: 2px 3px;
+      text-align: center;
+    }
+
+    #custom-skin-create:hover {
+      background: linear-gradient(to bottom, #f0f0f0 0%, #d0d0d0 100%);
+      cursor: pointer;
+      font-style: italic;
+    }
+
+    #custom-skin-preview {
+      width: 100%;
+      height: 1.5em;
+      background: linear-gradient(to bottom, var(--preview-gradient-color) 0%, var(--preview-primary-color) 100%);
+      color: white;
+      text-align: center;
+    }
+
+    @media (max-width: 500px) {
+      .speaker-icon {
+        width: 24px;
+        height: 24px;
+      }
+
+      .volume-popup {
+        width: 120px;
+        padding: 8px;
+      }
+
+      .start-button,
+      .gallery-button,
+      .discord-button {
+        width: 32px;
+        height: 32px;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<div id="wallpaper"></div>
+  <div id="wallpaper"></div>
 
-<main class="player-container">
-  <div class="window-box" id="player-box">
-    <div class="window-header" id="player-header">/pr/underground/uplink.exe</div>
-    <div class="window-content" id="player-content">
-      <div class="now-playing">
-        <h2>Underground.fm Player</h2>
-        <p class="now-playing-message">>Check Discord for current song playing or to submit songs!</p>
-        <p class="now-playing-message">>Use the gallery to change wallpapers!</p>
+  <main class="player-container">
+    <div class="window-box" id="player-box">
+      <div class="window-header" id="player-header">/pr/underground/uplink.exe</div>
+      <div class="window-content" id="player-content">
+        <div class="now-playing">
+          <h2>Underground.fm Player</h2>
+          <p class="now-playing-message">>Check Discord for current song playing or to submit songs!</p>
+          <p class="now-playing-message">>Use the gallery to change wallpapers!</p>
+        </div>
+        <div class="controls">
+          <button id="play-btn">▶ Play</button>
+          <button id="pause-btn">⏸ Pause</button>
+        </div>
       </div>
-      <div class="controls">
-        <button id="play-btn">▶ Play</button>
-        <button id="pause-btn">⏸ Pause</button>
+    </div>
+
+    <audio id="audio" autoplay>
+      <source src="https://radio.projectradio.org/listen/underground.fm/radio.mp3" type="audio/mpeg">
+    </audio>
+  </main>
+
+  <div class="taskbar">
+    <div class="icon-container">
+      <div class="window-button" id="start-button">
+        <img src="https://projectradio.org/R-Transparent.png" alt="Start Logo">
+      </div>
+      <div class="window-button" id="gallery-button">
+        <img src="https://projectradio.org/radio/RjMRqmK.png" alt="Gallery Icon">
+      </div>
+      <div class="window-button" id="skin-selector-button">
+        <img
+          src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwinaero.com%2Fblog%2Fwp-content%2Fuploads%2F2019%2F05%2FMicrosoft-Paint-icon-big-256.png&f=1&nofb=1&ipt=bbe778048491c3b87b6c9b8508b070d1212eafe7cc945d504044b4d8cfce6121"
+          alt="Skin Selector">
+      </div>
+      <div class="window-button" id="discord-button">
+        <img
+          src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/41611b21-a7ce-419b-bc77-4644f8105930/dek5r4f-2a6c12b8-588e-4224-b723-62d328f3a77c.png/v1/fill/w_894,h_894/3d_discord_icon_by_therprtnetwork_dek5r4f-pre.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTAwMCIsInBhdGgiOiJcL2ZcLzQxNjExYjIxLWE3Y2UtNDE5Yi1iYzc3LTQ2NDRmODEwNTkzMFwvZGVrNXI0Zi0yYTZjMTJiOC01ODhlLTQyMjQtYjcyMy02MmQzMjhmM2E3N2MucG5nIiwid2lkdGgiOiI8PTEwMDAifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.LGtFaLbHGgh-_ZF0i_vwjb1DZn5WrwnVYEDEGIslJqQ"
+          alt="Discord Icon">
       </div>
     </div>
-  </div>
-
-  <audio id="audio" autoplay>
-    <source src="https://radio.projectradio.org/listen/underground.fm/radio.mp3" type="audio/mpeg">
-  </audio>
-</main>
-
-<div class="taskbar">
-  <div class="icon-container">
-    <div class="window-button" id="start-button">
-      <img src="https://projectradio.org/R-Transparent.png" alt="Start Logo">
-    </div>
-    <div class="window-button" id="gallery-button">
-      <img src="https://projectradio.org/radio/RjMRqmK.png" alt="Gallery Icon">
-    </div>
-    <div class="window-button" id="skin-selector-button">
-      <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwinaero.com%2Fblog%2Fwp-content%2Fuploads%2F2019%2F05%2FMicrosoft-Paint-icon-big-256.png&f=1&nofb=1&ipt=bbe778048491c3b87b6c9b8508b070d1212eafe7cc945d504044b4d8cfce6121" alt="Skin Selector">
-    </div>
-    <div class="window-button" id="discord-button">
-      <img src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/41611b21-a7ce-419b-bc77-4644f8105930/dek5r4f-2a6c12b8-588e-4224-b723-62d328f3a77c.png/v1/fill/w_894,h_894/3d_discord_icon_by_therprtnetwork_dek5r4f-pre.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTAwMCIsInBhdGgiOiJcL2ZcLzQxNjExYjIxLWE3Y2UtNDE5Yi1iYzc3LTQ2NDRmODEwNTkzMFwvZGVrNXI0Zi0yYTZjMTJiOC01ODhlLTQyMjQtYjcyMy02MmQzMjhmM2E3N2MucG5nIiwid2lkdGgiOiI8PTEwMDAifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.LGtFaLbHGgh-_ZF0i_vwjb1DZn5WrwnVYEDEGIslJqQ" alt="Discord Icon">
+    <div class="speaker-icon" id="speaker-icon"></div>
+    <div class="volume-popup" id="volume-popup">
+      <div class="volume-arrow"></div>
+      <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="1">
     </div>
   </div>
-  <div class="speaker-icon" id="speaker-icon"></div>
-  <div class="volume-popup" id="volume-popup">
-    <div class="volume-arrow"></div>
-    <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="1">
+
+  <div class="start-menu" id="start-menu">
+    <ul>
+      <li><a href="https://projectradio.org">Return To Radio</a></li>
+      <li><a href="https://projectradio.org/radio/projectfm">Project.fm</a></li>
+      <li><a href="https://projectradio.org/radio/ruggedraw94">RuggedRaw.94</a></li>
+      <li><a href="https://projectradio.org/radio/dogstar">DogStar</a></li>
+    </ul>
   </div>
-</div>
 
-<div class="start-menu" id="start-menu">
-  <ul>
-    <li><a href="https://projectradio.org">Return To Radio</a></li>
-    <li><a href="https://projectradio.org/radio/projectfm">Project.fm</a></li>
-    <li><a href="https://projectradio.org/radio/ruggedraw94">RuggedRaw.94</a></li>
-    <li><a href="https://projectradio.org/radio/dogstar">DogStar</a></li>
-  </ul>
-</div>
-
-<div class="window-box" id="gallery-box" style="display:none; top:100px; left:100px;">
-  <div class="window-header" id="gallery-header">Gallery</div>
-  <div class="window-content" id="gallery-content">
-        <img src="https://projectradio.org/DRAINPAPER.PNG" alt="Sample5">
-        <img src="https://projectradio.org/radio/PRwallpaper2024.png" alt="Sample3">
-        <img src="https://projectradio.org/PROJECTR.jpg" alt="Sample2">
-        <img src="https://projectradio.org/whatthefuckboom.png" alt="Sample4">
-        <img src="https://projectradio.org/downloads/agentnaomiwallpaper.png" alt="Sample1">
+  <div class="window-box" id="gallery-box" style="display:none; top:100px; left:100px;">
+    <div class="window-header" id="gallery-header">Gallery</div>
+    <div class="window-content" id="gallery-content">
+      <img src="https://projectradio.org/DRAINPAPER.PNG" alt="Sample5">
+      <img src="https://projectradio.org/radio/PRwallpaper2024.png" alt="Sample3">
+      <img src="https://projectradio.org/PROJECTR.jpg" alt="Sample2">
+      <img src="https://projectradio.org/whatthefuckboom.png" alt="Sample4">
+      <img src="https://projectradio.org/downloads/agentnaomiwallpaper.png" alt="Sample1">
+    </div>
   </div>
-</div>
 
-<div class="window-box" id="skin-selector-box" style="display:none; top: 150px; left: 150px;">
-  <div class="window-header" id="skin-selector-header">Skins</div>
-  <div class="window-content" id="skin-selector-content">
+  <div class="window-box" id="skin-selector-box" style="display:none; top: 150px; left: 150px;">
+    <div class="window-header" id="skin-selector-header">Skins</div>
+    <div class="window-content" id="skin-selector-content">
       <ul id="skin-list">
       </ul>
       <div id="custom-skin-button">Make your own!</div>
+    </div>
   </div>
-</div>
 
-<div class="window-box" id="custom-skin-box" style="display:none; top: 150px; left: 150px;">
-  <div class="window-header" id="custom-skin-header">Custom Skin</div>
-  <div class="window-content" id="custom-skin-content">
-    <input type="text" id="custom-skin-name" placeholder="Tribal Drums">
-    <input type="text" id="custom-skin-primary" placeholder="HEX 0 (ex #111111)">
-    <input type="text" id="custom-skin-secondary" placeholder="HEX 1">
-    <div id="custom-skin-create">SKIN MY SHIT</div>
+  <div class="window-box" id="custom-skin-box" style="display:none; top: 150px; left: 150px;">
+    <div class="window-header" id="custom-skin-header">Custom Skin</div>
+    <div class="window-content" id="custom-skin-content">
+      <input type="text" id="custom-skin-name" placeholder="Tribal Drums">
+      <input type="text" id="custom-skin-primary" placeholder="HEX 0 (ex #111111)">
+      <input type="text" id="custom-skin-secondary" placeholder="HEX 1">
+      <div id="custom-skin-create">SKIN MY SHIT</div>
+      <div id="custom-skin-preview"></div>
+    </div>
   </div>
-</div>
 
-<div class="window-box" id="discord-box" style="display:none; top:200px; left:200px;">
-  <div class="window-header" id="discord-header">Discord</div>
-  <div class="window-content" id="discord-content">
-    <p>Join our community on Discord:</p>
-    <a href="https://discord.gg/qUFrxKxchg" target="_blank">Click here to join</a>
+  <div class="window-box" id="discord-box" style="display:none; top:200px; left:200px;">
+    <div class="window-header" id="discord-header">Discord</div>
+    <div class="window-content" id="discord-content">
+      <p>Join our community on Discord:</p>
+      <a href="https://discord.gg/qUFrxKxchg" target="_blank">Click here to join</a>
+    </div>
   </div>
-</div>
 
-<script>
-// -------- DOM identifications --------
-const audio = document.getElementById('audio');
-const playBtn = document.getElementById('play-btn');
-const pauseBtn = document.getElementById('pause-btn');
-const speakerIcon = document.getElementById('speaker-icon');
-const volumePopup = document.getElementById('volume-popup');
-const volumeSlider = document.getElementById('volume-slider');
-const startButton = document.getElementById('start-button');
-const startMenu = document.getElementById('start-menu');
-const galleryButton = document.getElementById('gallery-button');
-const galleryBox = document.getElementById('gallery-box');
-const skinButton = document.getElementById('skin-selector-button');
-const skinBox = document.getElementById('skin-selector-box');
-const customSkinButton = document.getElementById('custom-skin-button');
-const customSkinBox = document.getElementById('custom-skin-box')
-const discordButton = document.getElementById('discord-button');
-const discordBox = document.getElementById('discord-box');
-const wallpaper = document.getElementById('wallpaper');
+  <script>
+    // -------- DOM identifications --------
+    const audio = document.getElementById('audio');
+    const playBtn = document.getElementById('play-btn');
+    const pauseBtn = document.getElementById('pause-btn');
+    const speakerIcon = document.getElementById('speaker-icon');
+    const volumePopup = document.getElementById('volume-popup');
+    const volumeSlider = document.getElementById('volume-slider');
+    const startButton = document.getElementById('start-button');
+    const startMenu = document.getElementById('start-menu');
+    const galleryButton = document.getElementById('gallery-button');
+    const galleryBox = document.getElementById('gallery-box');
+    const skinButton = document.getElementById('skin-selector-button');
+    const skinBox = document.getElementById('skin-selector-box');
+    const customSkinButton = document.getElementById('custom-skin-button');
+    const customSkinBox = document.getElementById('custom-skin-box')
+    const discordButton = document.getElementById('discord-button');
+    const discordBox = document.getElementById('discord-box');
+    const wallpaper = document.getElementById('wallpaper');
 
-// -------- playback controls --------
-playBtn.addEventListener('click', () => audio.play());
-pauseBtn.addEventListener('click', () => audio.pause());
+    // -------- playback controls --------
+    playBtn.addEventListener('click', () => audio.play());
+    pauseBtn.addEventListener('click', () => audio.pause());
 
-audio.volume = volumeSlider.value;
-volumeSlider.addEventListener('input', () => audio.volume = volumeSlider.value);
+    audio.volume = volumeSlider.value;
+    volumeSlider.addEventListener('input', () => audio.volume = volumeSlider.value);
 
-// -------- window triggers --------
-speakerIcon.addEventListener('click', e => {
-  e.stopPropagation();
-  volumePopup.style.display = volumePopup.style.display === 'block' ? 'none' : 'block';
-});
+    // -------- window triggers --------
+    speakerIcon.addEventListener('click', e => {
+      e.stopPropagation();
+      volumePopup.style.display = volumePopup.style.display === 'block' ? 'none' : 'block';
+    });
 
-startButton.addEventListener('click', e => {
-  e.stopPropagation();
-  startMenu.style.display = startMenu.style.display === 'block' ? 'none' : 'block';
-});
+    startButton.addEventListener('click', e => {
+      e.stopPropagation();
+      startMenu.style.display = startMenu.style.display === 'block' ? 'none' : 'block';
+    });
 
-galleryButton.addEventListener('click', e => {
-  e.stopPropagation();
-  galleryBox.style.display = galleryBox.style.display === 'block' ? 'none' : 'block';
-});
+    galleryButton.addEventListener('click', e => {
+      e.stopPropagation();
+      galleryBox.style.display = galleryBox.style.display === 'block' ? 'none' : 'block';
+    });
 
-skinButton.addEventListener('click', e => {
-  e.stopPropagation();
-  skinBox.style.display = skinBox.style.display === "block" ? 'none' : 'block';
-})
+    skinButton.addEventListener('click', e => {
+      e.stopPropagation();
+      skinBox.style.display = skinBox.style.display === "block" ? 'none' : 'block';
+    })
 
-customSkinButton.addEventListener('click', e => {
-  e.stopPropagation();
-  customSkinBox.style.display = customSkinBox.style.display === "block" ? "none" : "block";
-})
+    customSkinButton.addEventListener('click', e => {
+      e.stopPropagation();
+      customSkinBox.style.display = customSkinBox.style.display === "block" ? "none" : "block";
+    })
 
-discordButton.addEventListener('click', e => {
-  e.stopPropagation();
-  discordBox.style.display = discordBox.style.display === 'block' ? 'none' : 'block';
-});
+    discordButton.addEventListener('click', e => {
+      e.stopPropagation();
+      discordBox.style.display = discordBox.style.display === 'block' ? 'none' : 'block';
+    });
 
-// -------- window hide triggers --------
-document.addEventListener('click', e => {
-  if (!volumePopup.contains(e.target) && e.target !== speakerIcon) volumePopup.style.display = 'none';
-  if (!startMenu.contains(e.target) && e.target !== startButton) startMenu.style.display = 'none';
-  if (!galleryBox.contains(e.target) && e.target !== galleryButton) galleryBox.style.display = 'none';
-  if (!discordBox.contains(e.target) && e.target !== discordButton) discordBox.style.display = 'none';
-});
+    // -------- window hide triggers --------
+    document.addEventListener('click', e => {
+      if (!volumePopup.contains(e.target) && e.target !== speakerIcon) volumePopup.style.display = 'none';
+      if (!startMenu.contains(e.target) && e.target !== startButton) startMenu.style.display = 'none';
+      if (!galleryBox.contains(e.target) && e.target !== galleryButton) galleryBox.style.display = 'none';
+      if (!discordBox.contains(e.target) && e.target !== discordButton) discordBox.style.display = 'none';
+    });
 
-// -------- drag-and-drop logic for windows --------
-document.querySelectorAll(".window-header").forEach(( header ) => {
-  const elementBox = header.parentElement;
-  let isDragging=false, startX=0, startY=0, origX=0, origY=0;
+    // -------- drag-and-drop logic for windows --------
+    document.querySelectorAll(".window-header").forEach((header) => {
+      const elementBox = header.parentElement;
+      let isDragging = false, startX = 0, startY = 0, origX = 0, origY = 0;
 
-  header.addEventListener('mousedown', e =>{
-    isDragging = true;
-    startX = e.clientX; startY = e.clientY;
-    const rect = elementBox.getBoundingClientRect();
-    origX = rect.left; origY = rect.top;
-    elementBox.style.position='absolute'; elementBox.style.zIndex=1000; elementBox.style.margin=0;
-  });
+      header.addEventListener('mousedown', e => {
+        isDragging = true;
+        startX = e.clientX; startY = e.clientY;
+        const rect = elementBox.getBoundingClientRect();
+        origX = rect.left; origY = rect.top;
+        elementBox.style.position = 'absolute'; elementBox.style.zIndex = 1000; elementBox.style.margin = 0;
+      });
 
-  document.addEventListener('mousemove', e =>{
-    if(!isDragging) return;
-    let dx = e.clientX - startX, dy = e.clientY - startY;
-    let newLeft = origX + dx, newTop = origY + dy;
-    const rect = elementBox.getBoundingClientRect();
-    const windowWidth = window.innerWidth, windowHeight = window.innerHeight;
-    if (newLeft < 0) newLeft = 0;
-    if (newTop < 0) newTop = 0;
-    if (newLeft + rect.width > windowWidth) newLeft = windowWidth - rect.width;
-    if(newTop + rect.height > windowHeight) newTop = windowHeight - rect.height;
-    elementBox.style.left = newLeft+'px';
-    elementBox.style.top = newTop+'px';
-  });
+      document.addEventListener('mousemove', e => {
+        if (!isDragging) return;
+        let dx = e.clientX - startX, dy = e.clientY - startY;
+        let newLeft = origX + dx, newTop = origY + dy;
+        const rect = elementBox.getBoundingClientRect();
+        const windowWidth = window.innerWidth, windowHeight = window.innerHeight;
+        if (newLeft < 0) newLeft = 0;
+        if (newTop < 0) newTop = 0;
+        if (newLeft + rect.width > windowWidth) newLeft = windowWidth - rect.width;
+        if (newTop + rect.height > windowHeight) newTop = windowHeight - rect.height;
+        elementBox.style.left = newLeft + 'px';
+        elementBox.style.top = newTop + 'px';
+      });
 
-  document.addEventListener("mouseup", () => { isDragging = false; });
-})
+      document.addEventListener("mouseup", () => { isDragging = false; });
+    })
 
-// -------- skin selector logic --------
-let skinDictionary = {
-  // format:
-  // "Skin Name": ["PRIMARY COLOR", "GRADIENT COLOR"]
-  "Wired Lime": ["#6ebf00", "#96bf55"],
-  "Terminal Tulip": ['#ff5b5b', '#676767'],
-  "Take Cover": ["#40713b", "#34552d"],
-  "Mosh Pit": ["#000000", "#2f2f2f"],
-  "Uranium Junkyard": ["#555555", "#f8f861"]
-}
+    // -------- skin selector logic --------
+    let skinDictionary = {
+      // format:
+      // "Skin Name": ["PRIMARY COLOR", "GRADIENT COLOR"]
+      "Wired Lime": ["#6ebf00", "#96bf55"],
+      "Terminal Tulip": ['#ff5b5b', '#676767'],
+      "Take Cover": ["#40713b", "#34552d"],
+      "Mosh Pit": ["#000000", "#2f2f2f"],
+      "Uranium Junkyard": ["#555555", "#f8f861"]
+    }
 
-function changeSkin(newSkinData) {
-  console.log("function called");
-  document.querySelector(':root').style.setProperty('--skin-primary-color', newSkinData[0]);
-  document.querySelector(':root').style.setProperty('--skin-gradient-color', newSkinData[1]);
-}
+    function changeSkin(newSkinData) {
+      console.log("function called");
+      document.querySelector(':root').style.setProperty('--skin-primary-color', newSkinData[0]);
+      document.querySelector(':root').style.setProperty('--skin-gradient-color', newSkinData[1]);
+    }
 
-const skinList = document.getElementById("skin-list")
-for (let skin in skinDictionary) {
-  let skinEntry = document.createElement("li");
-  let skinText = document.createElement("p");
-  skinText.innerHTML = skin;
-  skinEntry.appendChild(skinText);
-  skinList.appendChild(skinEntry);
-  skinEntry.addEventListener('mouseover', () => { skinText.style.color = "#ffffff"; });
-  skinEntry.addEventListener('mouseleave', () => { skinText.style.color = "#000000"; });
-  skinEntry.addEventListener('mousedown', (e) => { changeSkin(skinDictionary[skin]); });
-}
+    const skinList = document.getElementById("skin-list")
+    for (let skin in skinDictionary) {
+      let skinEntry = document.createElement("li");
+      let skinText = document.createElement("p");
+      skinText.innerHTML = skin;
+      skinEntry.appendChild(skinText);
+      skinList.appendChild(skinEntry);
+      skinEntry.addEventListener('mouseover', () => { skinText.style.color = "#ffffff"; });
+      skinEntry.addEventListener('mouseleave', () => { skinText.style.color = "#000000"; });
+      skinEntry.addEventListener('mousedown', (e) => { changeSkin(skinDictionary[skin]); });
+    }
 
 // -------- custom skin window logic --------
 let customSkinDictionary = undefined; // we need to load in values if they already exist
@@ -502,11 +541,11 @@ function validateHex(hexString) {
   return hexPattern.test(hexString);
 }
 
-function addSkin() {
-  let newSkinName = skinNameElement.value
-  let skinHex0 = hex0Element.value
-  let skinHex1 = hex1Element.value
-  if (newSkinName.length == 0 || !(validateHex(skinHex0)) || !(validateHex(skinHex1))) return;
+    function addSkin() {
+      let newSkinName = skinNameElement.value
+      let skinHex0 = hex0Element.value
+      let skinHex1 = hex1Element.value
+      if (newSkinName.length == 0 || !(validateHex(skinHex0)) || !(validateHex(skinHex1))) return;
 
   if (customSkinDictionary[newSkinName]) { return; } else { 
     customSkinDictionary[newSkinName] = [skinHex0, skinHex1]; 
@@ -526,19 +565,30 @@ function addSkin() {
   skinEntry.addEventListener('mousedown', (e) => { changeSkin(skinDictionary[newSkinName]); });
 }
 
-document.getElementById("custom-skin-create").addEventListener('mousedown', (e) => { addSkin() });
+    document.getElementById("custom-skin-create").addEventListener('mousedown', (e) => { addSkin() });
 
-skinNameElement.addEventListener('blur', (e) => {
-  skinNameElement.value.length < 1 ? skinNameElement.style.backgroundColor = '#e09191' : skinNameElement.style.backgroundColor = '#ffffff';
-})
+    skinNameElement.addEventListener('blur', (e) => {
+      skinNameElement.value.length < 1 ? skinNameElement.style.backgroundColor = '#e09191' : skinNameElement.style.backgroundColor = '#ffffff';
+      previewSkin();
+    })
 
-hex0Element.addEventListener('blur', (e) => {
-  !(validateHex(hex0Element.value)) ? hex0Element.style.backgroundColor = '#e09191' : hex0Element.style.backgroundColor = '#ffffff';
-})
+    hex0Element.addEventListener('blur', (e) => {
+      !(validateHex(hex0Element.value)) ? hex0Element.style.backgroundColor = '#e09191' : hex0Element.style.backgroundColor = '#ffffff';
+      previewSkin();
+    })
 
-hex1Element.addEventListener('blur', (e) => {
-  !(validateHex(hex1Element.value)) ? hex1Element.style.backgroundColor = '#e09191' : hex1Element.style.backgroundColor = '#ffffff';
-})
+    hex1Element.addEventListener('blur', (e) => {
+      !(validateHex(hex1Element.value)) ? hex1Element.style.backgroundColor = '#e09191' : hex1Element.style.backgroundColor = '#ffffff';
+      previewSkin();
+    })
+
+    function previewSkin() {
+      if (skinNameElement.value.length > 1 && validateHex(hex0Element.value) && validateHex(hex1Element.value)) {
+        document.querySelector(':root').style.setProperty('--preview-primary-color', hex0Element.value);
+        document.querySelector(':root').style.setProperty('--preview-gradient-color', hex1Element.value);
+        document.getElementById("custom-skin-preview").innerHTML = skinNameElement.value;
+      }
+    }
 
 // -------- dynamic loading of images into gallery --------
 const galleryImages = galleryBox.querySelectorAll('img');
@@ -572,4 +622,5 @@ function storageAvailable(type) {
 </script>
 
 </body>
+
 </html>
