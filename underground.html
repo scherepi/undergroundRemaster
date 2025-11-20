@@ -1,3 +1,4 @@
+<!--reminder for me to fix sumn on the webamp player when stuff is back up-->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -304,10 +305,147 @@
       </div>
     </div>
 
-    <audio id="audio" autoplay>
-      <source src="https://radio.projectradio.org/listen/underground.fm/radio.mp3" type="audio/mpeg">
-    </audio>
-  </main>
+  <div id="app" style="height: 100vh; display: none;">
+    </div>
+    <script type="module">
+      import Webamp from "https://unpkg.com/webamp@^2";
+      let currentPlayedAt = null; 
+
+      async function fetchNowPlaying(){
+        try {
+          const res = await fetch("https://transport.projectradio.org:8080/api/nowplaying/underground.fm", { cache: "no-store" });
+          if(!res.ok) throw new Error("HTTP " + res.status);
+          const data = await res.json();
+          const np = data?.now_playing || {};
+          return {
+            title: np?.song?.title || null,
+            artist: np?.song?.artist || null,
+            duration: typeof np?.duration === 'number' ? np.duration : null,
+            elapsed: typeof np?.elapsed === 'number' ? np.elapsed : null,
+            played_at: typeof np?.played_at === 'number' ? np.played_at : null,
+            streamUrl: data?.station?.listen_url || "https://transport.projectradio.org:8080/underground.fm"
+          };
+        } catch (e) {
+          return { title: null, artist: null, duration: null, elapsed: null, played_at: null, streamUrl: "https://transport.projectradio.org:8080/dogstarfm" };
+        }
+      }
+
+      function setInitialElapsed(backElapsed){
+        if(!window.webamp) return;
+        if(typeof backElapsed !== 'number' || backElapsed < 0) return;
+        try {
+          window.webamp.store.dispatch({ type: 'UPDATE_TIME_ELAPSED', elapsed: backElapsed });
+        } catch(e){}
+      }
+
+      function updateWebampMetadata({ artist, title, duration, elapsed, played_at }) {
+        if (!window.webamp) return;
+        try {
+          const state = window.webamp.store.getState();
+          const currentId = state.playlist.currentTrack;
+          if (currentId != null) {
+            if(typeof duration === 'number' && duration > 0){
+              window.webamp.store.dispatch({ type: 'SET_MEDIA_DURATION', id: currentId, duration });
+            }
+            if(typeof played_at === 'number' && played_at > 0){
+              currentPlayedAt = played_at;
+              const nowSec = Date.now()/1000;
+              const alreadyElapsed = Math.max(0, nowSec - currentPlayedAt);
+              const startingElapsed = typeof elapsed === 'number' && elapsed >=0 ? elapsed : alreadyElapsed;
+              setInitialElapsed(startingElapsed);
+            }
+            window.webamp.store.dispatch({
+              type: "SET_MEDIA_TAGS",
+              id: currentId,
+              artist: artist || "",
+              title: title || "",
+              album: undefined,
+              albumArtUrl: null,
+              numberOfChannels: state.tracks[currentId]?.channels ?? 2,
+              bitrate: state.tracks[currentId]?.kbps ? Number(state.tracks[currentId].kbps) * 1000 : 128000,
+              sampleRate: 44100,
+            });
+            if(typeof elapsed === 'number' && elapsed >= 0 && !played_at){
+              setInitialElapsed(elapsed);
+            }
+          }
+        } catch (e) {
+        }
+        const marquee = document.querySelector("#app .marquee, #app .winamp2-js__title .marquee");
+        if (marquee) marquee.textContent = `${artist || ''}${artist && title ? ' - ' : ''}${title || ''}`;
+      }
+
+      async function applyMetadataOnce() {
+        const meta = await fetchNowPlaying();
+        if (meta.title && meta.artist) {
+          updateWebampMetadata({ artist: meta.artist, title: meta.title, duration: meta.duration, elapsed: meta.elapsed, played_at: meta.played_at });
+        }
+      }
+
+      function startPolling(){setInterval(applyMetadataOnce, 10000);}
+
+      async function init(){
+        const meta = await fetchNowPlaying();
+
+  const initialTitle = (meta.title && meta.artist) ? meta.title : "";
+  const initialArtist = (meta.title && meta.artist) ? meta.artist : "";
+  currentPlayedAt = meta.played_at || null;
+
+        const skinUrlMap = {
+          "Wired Lime": "skin1.wsz",
+          "Terminal Tulip": "skin2.wsz",
+          "Take Cover": "skin3.wsz",
+          "Mosh Pit": "skin4.wsz",
+          "Uranium Junkyard": "skin5.wsz"
+        };
+        const skinColorMap = {
+          "Wired Lime": ["#6ebf00", "#96bf55"],
+          "Terminal Tulip": ['#ff5b5b', '#676767'],
+          "Take Cover": ["#40713b", "#34552d"],
+          "Mosh Pit": ["#000000", "#2f2f2f"],
+          "Uranium Junkyard": ["#555555", "#f8f861"]
+        };
+        
+        let initialSkin = "skin1.wsz";
+        try {
+          const savedSkinName = window.localStorage.getItem("selectedWinampSkin");
+          if (savedSkinName && skinUrlMap[savedSkinName]) {
+            initialSkin = skinUrlMap[savedSkinName];
+            const savedSkinData = skinColorMap[savedSkinName];
+            if (savedSkinData) {
+              document.querySelector(':root').style.setProperty('--skin-primary-color', savedSkinData[0]);
+              document.querySelector(':root').style.setProperty('--skin-gradient-color', savedSkinData[1]);
+            }
+          }
+        } catch (e) {
+        }
+        const webamp = new Webamp({
+          initialTracks: [{
+            url: meta.streamUrl,
+            metaData: { title: initialTitle, artist: initialArtist },
+            duration: 0
+          }],
+          initialSkin: { url: initialSkin },
+          windowLayout: {
+            main: { position: { x: 0, y: 0 } },
+            equalizer: { position: { x: 0, y: 116 } },
+            playlist: { position: { x: 275, y: 0 }, size: [0, 4], closed:true }
+          }
+        });
+
+        await webamp.renderWhenReady(document.getElementById("app"));
+        window.webamp = webamp;
+
+  setTimeout(() => {updateWebampMetadata({ artist: initialArtist, title: initialTitle, duration: meta.duration, elapsed: meta.elapsed, played_at: meta.played_at });}, 300);
+        setTimeout(applyMetadataOnce, 1500);
+        startPolling();
+      }
+      init().catch(() => {});
+    </script>
+  <audio id="audio" preload="none">
+    <source src="https://radio.projectradio.org/listen/underground.fm/radio.mp3" type="audio/mpeg">
+  </audio>
+</main>
 
   <div class="taskbar">
     <div class="icon-container">
@@ -322,7 +460,12 @@
           src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwinaero.com%2Fblog%2Fwp-content%2Fuploads%2F2019%2F05%2FMicrosoft-Paint-icon-big-256.png&f=1&nofb=1&ipt=bbe778048491c3b87b6c9b8508b070d1212eafe7cc945d504044b4d8cfce6121"
           alt="Skin Selector">
       </div>
-      <div class="window-button" id="discord-button">
+     <!-- <div class="window-button" id="winamp-button">
+      <img src="Winamp-logo.svg.png" alt="Winamp Icon">
+    </div>
+    WINAMP LOGO BUT IT LOOKS LIKE SHIT
+    -->
+    <div class="window-button" id="discord-button">
         <img
           src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/41611b21-a7ce-419b-bc77-4644f8105930/dek5r4f-2a6c12b8-588e-4224-b723-62d328f3a77c.png/v1/fill/w_894,h_894/3d_discord_icon_by_therprtnetwork_dek5r4f-pre.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTAwMCIsInBhdGgiOiJcL2ZcLzQxNjExYjIxLWE3Y2UtNDE5Yi1iYzc3LTQ2NDRmODEwNTkzMFwvZGVrNXI0Zi0yYTZjMTJiOC01ODhlLTQyMjQtYjcyMy02MmQzMjhmM2E3N2MucG5nIiwid2lkdGgiOiI8PTEwMDAifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.LGtFaLbHGgh-_ZF0i_vwjb1DZn5WrwnVYEDEGIslJqQ"
           alt="Discord Icon">
@@ -408,48 +551,53 @@
     const skinButton = document.getElementById('skin-selector-button');
     const skinBox = document.getElementById('skin-selector-box');
     const customSkinButton = document.getElementById('custom-skin-button');
-    const customSkinBox = document.getElementById('custom-skin-box')
+    const customSkinBox = document.getElementById('custom-skin-box');
     const discordButton = document.getElementById('discord-button');
     const discordBox = document.getElementById('discord-box');
+    const winampButton = document.getElementById('winamp-button');
+    const webampApp = document.getElementById('app');
     const wallpaper = document.getElementById('wallpaper');
 
-    // -------- playback controls --------
-    playBtn.addEventListener('click', () => audio.play());
-    pauseBtn.addEventListener('click', () => audio.pause());
+// -------- playback controls --------
+playBtn.addEventListener('click', () => {
+  if (window.webamp) {
+audio.pause();
+    window.webamp.play();
+  } else {audio.play();}
+});
+pauseBtn.addEventListener('click', () => {
+  if (window.webamp) {
+    window.webamp.pause();
+  }
+  audio.pause();
+});
 
-    audio.volume = volumeSlider.value;
-    volumeSlider.addEventListener('input', () => audio.volume = volumeSlider.value);
+audio.volume = volumeSlider.value;
+volumeSlider.addEventListener('input', () => {
+  audio.volume = volumeSlider.value;
+  if (window.webamp && typeof window.webamp.setVolume === "function") {
+    window.webamp.setVolume(Math.round(volumeSlider.value * 100));
+  }
+});
 
     // -------- window triggers --------
-    speakerIcon.addEventListener('click', e => {
-      e.stopPropagation();
-      volumePopup.style.display = volumePopup.style.display === 'block' ? 'none' : 'block';
-    });
+    function opencloseWindow(element) {
+      return (e) => {
+        e.stopPropagation();
+        element.style.display = element.style.display === 'block' ? 'none' : 'block';
+      };
+    }
 
-    startButton.addEventListener('click', e => {
+    speakerIcon.addEventListener('click', opencloseWindow(volumePopup));
+    startButton.addEventListener('click', opencloseWindow(startMenu));
+    galleryButton.addEventListener('click', opencloseWindow(galleryBox));
+    skinButton.addEventListener('click', opencloseWindow(skinBox));
+    customSkinButton.addEventListener('click', opencloseWindow(customSkinBox));
+    discordButton.addEventListener('click', opencloseWindow(discordBox));
+    /*winampButton.addEventListener('click', e => {
       e.stopPropagation();
-      startMenu.style.display = startMenu.style.display === 'block' ? 'none' : 'block';
-    });
-
-    galleryButton.addEventListener('click', e => {
-      e.stopPropagation();
-      galleryBox.style.display = galleryBox.style.display === 'block' ? 'none' : 'block';
-    });
-
-    skinButton.addEventListener('click', e => {
-      e.stopPropagation();
-      skinBox.style.display = skinBox.style.display === "block" ? 'none' : 'block';
-    })
-
-    customSkinButton.addEventListener('click', e => {
-      e.stopPropagation();
-      customSkinBox.style.display = customSkinBox.style.display === "block" ? "none" : "block";
-    })
-
-    discordButton.addEventListener('click', e => {
-      e.stopPropagation();
-      discordBox.style.display = discordBox.style.display === 'block' ? 'none' : 'block';
-    });
+        webampApp.style.display = webampApp.style.display === 'block' ? 'none' : 'block';
+    });*/
 
     // -------- window hide triggers --------
     document.addEventListener('click', e => {
@@ -487,7 +635,7 @@
       });
 
       document.addEventListener("mouseup", () => { isDragging = false; });
-    })
+    });
 
     // -------- skin selector logic --------
     let skinDictionary = {
@@ -498,15 +646,26 @@
       "Take Cover": ["#40713b", "#34552d"],
       "Mosh Pit": ["#000000", "#2f2f2f"],
       "Uranium Junkyard": ["#555555", "#f8f861"]
-    }
-
-    function changeSkin(newSkinData) {
-      console.log("function called");
-      document.querySelector(':root').style.setProperty('--skin-primary-color', newSkinData[0]);
+    };
+     const webampSkinMap = {
+  "Wired Lime": "skin1.wsz",         
+  "Terminal Tulip": "skin2.wsz",
+  "Take Cover": "skin3.wsz",
+  "Mosh Pit": "skin4.wsz",
+  "Uranium Junkyard": "skin5.wsz"
+};
+function changeSkin(skinName, newSkinData) {
+          document.querySelector(':root').style.setProperty('--skin-primary-color', newSkinData[0]);
       document.querySelector(':root').style.setProperty('--skin-gradient-color', newSkinData[1]);
-    }
+    if (window.webamp && typeof window.webamp.setSkinFromUrl === 'function') {
+    window.webamp.setSkinFromUrl(webampSkinMap[skinName]);
+  }
+  if (storageAvailable("localStorage") && webampSkinMap[skinName]) {
+    localStorage.setItem("selectedWinampSkin", skinName);
+  }
+}
 
-    const skinList = document.getElementById("skin-list")
+    const skinList = document.getElementById("skin-list");
     for (let skin in skinDictionary) {
       let skinEntry = document.createElement("li");
       let skinText = document.createElement("p");
@@ -515,7 +674,7 @@
       skinList.appendChild(skinEntry);
       skinEntry.addEventListener('mouseover', () => { skinText.style.color = "#ffffff"; });
       skinEntry.addEventListener('mouseleave', () => { skinText.style.color = "#000000"; });
-      skinEntry.addEventListener('mousedown', (e) => { changeSkin(skinDictionary[skin]); });
+      skinEntry.addEventListener('mousedown', (e) => { changeSkin(skin, skinDictionary[skin]); });
     }
 
 // -------- custom skin window logic --------
@@ -532,7 +691,7 @@ if (storageAvailable("localStorage")) {
       skinList.appendChild(skinEntry);
       skinEntry.addEventListener('mouseover', () => { skinText.style.color = "#ffffff"; });
       skinEntry.addEventListener('mouseleave', () => { skinText.style.color = "#000000"; });
-      skinEntry.addEventListener('mousedown', (e) => { changeSkin(skinDictionary[skin]); });
+      skinEntry.addEventListener('mousedown', (e) => { changeSkin(skin, customSkinDictionary[skin]); });
     }
   } else {
     console.log("didn't find any custom skins already saved in the browser. that's fine, we can just make a blank dictionary");
@@ -572,7 +731,7 @@ function validateHex(hexString) {
   skinList.appendChild(skinEntry);
   skinEntry.addEventListener('mouseover', () => { skinText.style.color = "#ffffff"; });
   skinEntry.addEventListener('mouseleave', () => { skinText.style.color = "#000000"; });
-  skinEntry.addEventListener('mousedown', (e) => { changeSkin(skinDictionary[newSkinName]); });
+  skinEntry.addEventListener('mousedown', (e) => { changeSkin(newSkinName, skinDictionary[newSkinName]); });
 }
 
     document.getElementById("custom-skin-create").addEventListener('mousedown', (e) => { addSkin() });
