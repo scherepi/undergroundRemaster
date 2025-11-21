@@ -313,7 +313,7 @@
 
       async function fetchNowPlaying(){
         try {
-          const res = await fetch("https://transport.projectradio.org:8080/api/nowplaying/underground.fm", { cache: "no-store" });
+          const res = await fetch("http://transport.projectradio.org:8080/api/nowplaying/underground.fm", { cache: "no-store" });
           if(!res.ok) throw new Error("HTTP " + res.status);
           const data = await res.json();
           const np = data?.now_playing || {};
@@ -323,10 +323,10 @@
             duration: typeof np?.duration === 'number' ? np.duration : null,
             elapsed: typeof np?.elapsed === 'number' ? np.elapsed : null,
             played_at: typeof np?.played_at === 'number' ? np.played_at : null,
-            streamUrl: data?.station?.listen_url || "https://transport.projectradio.org:8080/underground.fm"
+            streamUrl: data?.station?.listen_url || "http://transport.projectradio.org:8080/underground.fm"
           };
         } catch (e) {
-          return { title: null, artist: null, duration: null, elapsed: null, played_at: null, streamUrl: "https://transport.projectradio.org:8080/dogstarfm" };
+          return { title: null, artist: null, duration: null, elapsed: null, played_at: null, streamUrl: "http://transport.projectradio.org:8080/underground.fm" };
         }
       }
 
