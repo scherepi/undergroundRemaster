@@ -7,6 +7,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Underground.fm</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+    @font-face {
+      font-family: 'W95';
+      src: url(fonts/w95font.woff2);
+    }
+
     /* global variables, for manipulation via JS */
     :root {
       --skin-gradient-color: #6ebf00;
@@ -47,10 +54,12 @@
       font-weight: bold;
       cursor: move;
       border-bottom: 2px solid #000080;
+      font-family: 'W95', 'VT323', monospace;
     }
 
     .window-content {
       padding: 10px;
+      font-family: 'W95', 'VT323', monospace;
     }
 
     .now-playing h2 {
@@ -68,7 +77,7 @@
       border: 2px solid #808080;
       border-radius: 3px;
       padding: 6px 12px;
-      font-family: "Tahoma", sans-serif;
+      font-family: "W95", sans-serif;
       font-size: 14px;
       cursor: pointer;
       box-shadow: 1px 1px 0 #fff inset, -1px -1px 0 #404040 inset;
@@ -213,7 +222,7 @@
       border: 2px solid #808080;
       border-radius: 3px;
       padding: 6px 12px;
-      font-family: "Tahoma", sans-serif;
+      font-family: "W95", 'VT323', monospace;
       font-size: 14px;
       cursor: pointer;
       box-shadow: 1px 1px 0 #fff inset, -1px -1px 0 #404040 inset;
@@ -241,8 +250,8 @@
 
     #custom-skin-create {
       position: absolute;
-      right: 3%;
-      top: 53%;
+      right: 5%;
+      top: 43%;
       background: linear-gradient(to bottom, #e0e0e0 0%, #c0c0c0 100%);
       border: 2px solid #808080;
       border-radius: 3px;
@@ -262,6 +271,12 @@
       background: linear-gradient(to bottom, var(--preview-gradient-color) 0%, var(--preview-primary-color) 100%);
       color: white;
       text-align: center;
+    }
+
+    #credits-blurb {
+      font-family: 'W95', 'VT323', monospace;
+      font-weight: 400;
+      font-style: normal;
     }
 
     @media (max-width: 500px) {
@@ -305,16 +320,16 @@
       </div>
     </div>
 
-  <div id="app" style="height: 100vh; display: none;">
+    <div id="app" style="height: 100vh; display: none;">
     </div>
     <script type="module">
       import Webamp from "https://unpkg.com/webamp@^2";
-      let currentPlayedAt = null; 
+      let currentPlayedAt = null;
 
-      async function fetchNowPlaying(){
+      async function fetchNowPlaying() {
         try {
           const res = await fetch("http://transport.projectradio.org:8080/api/nowplaying/underground.fm", { cache: "no-store" });
-          if(!res.ok) throw new Error("HTTP " + res.status);
+          if (!res.ok) throw new Error("HTTP " + res.status);
           const data = await res.json();
           const np = data?.now_playing || {};
           return {
@@ -330,12 +345,12 @@
         }
       }
 
-      function setInitialElapsed(backElapsed){
-        if(!window.webamp) return;
-        if(typeof backElapsed !== 'number' || backElapsed < 0) return;
+      function setInitialElapsed(backElapsed) {
+        if (!window.webamp) return;
+        if (typeof backElapsed !== 'number' || backElapsed < 0) return;
         try {
           window.webamp.store.dispatch({ type: 'UPDATE_TIME_ELAPSED', elapsed: backElapsed });
-        } catch(e){}
+        } catch (e) { }
       }
 
       function updateWebampMetadata({ artist, title, duration, elapsed, played_at }) {
@@ -344,14 +359,14 @@
           const state = window.webamp.store.getState();
           const currentId = state.playlist.currentTrack;
           if (currentId != null) {
-            if(typeof duration === 'number' && duration > 0){
+            if (typeof duration === 'number' && duration > 0) {
               window.webamp.store.dispatch({ type: 'SET_MEDIA_DURATION', id: currentId, duration });
             }
-            if(typeof played_at === 'number' && played_at > 0){
+            if (typeof played_at === 'number' && played_at > 0) {
               currentPlayedAt = played_at;
-              const nowSec = Date.now()/1000;
+              const nowSec = Date.now() / 1000;
               const alreadyElapsed = Math.max(0, nowSec - currentPlayedAt);
-              const startingElapsed = typeof elapsed === 'number' && elapsed >=0 ? elapsed : alreadyElapsed;
+              const startingElapsed = typeof elapsed === 'number' && elapsed >= 0 ? elapsed : alreadyElapsed;
               setInitialElapsed(startingElapsed);
             }
             window.webamp.store.dispatch({
@@ -365,7 +380,7 @@
               bitrate: state.tracks[currentId]?.kbps ? Number(state.tracks[currentId].kbps) * 1000 : 128000,
               sampleRate: 44100,
             });
-            if(typeof elapsed === 'number' && elapsed >= 0 && !played_at){
+            if (typeof elapsed === 'number' && elapsed >= 0 && !played_at) {
               setInitialElapsed(elapsed);
             }
           }
@@ -382,14 +397,14 @@
         }
       }
 
-      function startPolling(){setInterval(applyMetadataOnce, 10000);}
+      function startPolling() { setInterval(applyMetadataOnce, 10000); }
 
-      async function init(){
+      async function init() {
         const meta = await fetchNowPlaying();
 
-  const initialTitle = (meta.title && meta.artist) ? meta.title : "";
-  const initialArtist = (meta.title && meta.artist) ? meta.artist : "";
-  currentPlayedAt = meta.played_at || null;
+        const initialTitle = (meta.title && meta.artist) ? meta.title : "";
+        const initialArtist = (meta.title && meta.artist) ? meta.artist : "";
+        currentPlayedAt = meta.played_at || null;
 
         const skinUrlMap = {
           "Wired Lime": "skin1.wsz",
@@ -405,7 +420,7 @@
           "Mosh Pit": ["#000000", "#2f2f2f"],
           "Uranium Junkyard": ["#555555", "#f8f861"]
         };
-        
+
         let initialSkin = "skin1.wsz";
         try {
           const savedSkinName = window.localStorage.getItem("selectedWinampSkin");
@@ -429,23 +444,23 @@
           windowLayout: {
             main: { position: { x: 0, y: 0 } },
             equalizer: { position: { x: 0, y: 116 } },
-            playlist: { position: { x: 275, y: 0 }, size: [0, 4], closed:true }
+            playlist: { position: { x: 275, y: 0 }, size: [0, 4], closed: true }
           }
         });
 
         await webamp.renderWhenReady(document.getElementById("app"));
         window.webamp = webamp;
 
-  setTimeout(() => {updateWebampMetadata({ artist: initialArtist, title: initialTitle, duration: meta.duration, elapsed: meta.elapsed, played_at: meta.played_at });}, 300);
+        setTimeout(() => { updateWebampMetadata({ artist: initialArtist, title: initialTitle, duration: meta.duration, elapsed: meta.elapsed, played_at: meta.played_at }); }, 300);
         setTimeout(applyMetadataOnce, 1500);
         startPolling();
       }
-      init().catch(() => {});
+      init().catch(() => { });
     </script>
-  <audio id="audio" preload="none">
-    <source src="https://radio.projectradio.org/listen/underground.fm/radio.mp3" type="audio/mpeg">
-  </audio>
-</main>
+    <audio id="audio" preload="none">
+      <source src="https://radio.projectradio.org/listen/underground.fm/radio.mp3" type="audio/mpeg">
+    </audio>
+  </main>
 
   <div class="taskbar">
     <div class="icon-container">
@@ -460,12 +475,12 @@
           src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwinaero.com%2Fblog%2Fwp-content%2Fuploads%2F2019%2F05%2FMicrosoft-Paint-icon-big-256.png&f=1&nofb=1&ipt=bbe778048491c3b87b6c9b8508b070d1212eafe7cc945d504044b4d8cfce6121"
           alt="Skin Selector">
       </div>
-     <!-- <div class="window-button" id="winamp-button">
+      <!-- <div class="window-button" id="winamp-button">
       <img src="Winamp-logo.svg.png" alt="Winamp Icon">
     </div>
     WINAMP LOGO BUT IT LOOKS LIKE SHIT
     -->
-    <div class="window-button" id="discord-button">
+      <div class="window-button" id="discord-button">
         <img
           src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/41611b21-a7ce-419b-bc77-4644f8105930/dek5r4f-2a6c12b8-588e-4224-b723-62d328f3a77c.png/v1/fill/w_894,h_894/3d_discord_icon_by_therprtnetwork_dek5r4f-pre.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTAwMCIsInBhdGgiOiJcL2ZcLzQxNjExYjIxLWE3Y2UtNDE5Yi1iYzc3LTQ2NDRmODEwNTkzMFwvZGVrNXI0Zi0yYTZjMTJiOC01ODhlLTQyMjQtYjcyMy02MmQzMjhmM2E3N2MucG5nIiwid2lkdGgiOiI8PTEwMDAifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.LGtFaLbHGgh-_ZF0i_vwjb1DZn5WrwnVYEDEGIslJqQ"
           alt="Discord Icon">
@@ -532,8 +547,9 @@
   <div class="window-box" id="credits-box" style="display:none; top:200px; left:200px;">
     <div class="window-header" id="credits-header">Task Manager</div>
     <div class="window-content" id="credits-content">
-      <p>Managing tasks is hard. Here are the people who struggled to do it for this awesome website:</p>
-
+      <p id="credits-blurb">task managing is hard as fuck. project radio rocks. here are the people that brought you
+        this kickass site:</p>
+      <div id="credits-list"></div>
     </div>
   </div>
   <script>
@@ -554,31 +570,33 @@
     const customSkinBox = document.getElementById('custom-skin-box');
     const discordButton = document.getElementById('discord-button');
     const discordBox = document.getElementById('discord-box');
+    const creditsButton = document.getElementById('credits-button');
+    const creditsBox = document.getElementById('credits-box');
     const winampButton = document.getElementById('winamp-button');
     const webampApp = document.getElementById('app');
     const wallpaper = document.getElementById('wallpaper');
 
-// -------- playback controls --------
-playBtn.addEventListener('click', () => {
-  if (window.webamp) {
-audio.pause();
-    window.webamp.play();
-  } else {audio.play();}
-});
-pauseBtn.addEventListener('click', () => {
-  if (window.webamp) {
-    window.webamp.pause();
-  }
-  audio.pause();
-});
+    // -------- playback controls --------
+    playBtn.addEventListener('click', () => {
+      if (window.webamp) {
+        audio.pause();
+        window.webamp.play();
+      } else { audio.play(); }
+    });
+    pauseBtn.addEventListener('click', () => {
+      if (window.webamp) {
+        window.webamp.pause();
+      }
+      audio.pause();
+    });
 
-audio.volume = volumeSlider.value;
-volumeSlider.addEventListener('input', () => {
-  audio.volume = volumeSlider.value;
-  if (window.webamp && typeof window.webamp.setVolume === "function") {
-    window.webamp.setVolume(Math.round(volumeSlider.value * 100));
-  }
-});
+    audio.volume = volumeSlider.value;
+    volumeSlider.addEventListener('input', () => {
+      audio.volume = volumeSlider.value;
+      if (window.webamp && typeof window.webamp.setVolume === "function") {
+        window.webamp.setVolume(Math.round(volumeSlider.value * 100));
+      }
+    });
 
     // -------- window triggers --------
     function opencloseWindow(element) {
@@ -594,6 +612,7 @@ volumeSlider.addEventListener('input', () => {
     skinButton.addEventListener('click', opencloseWindow(skinBox));
     customSkinButton.addEventListener('click', opencloseWindow(customSkinBox));
     discordButton.addEventListener('click', opencloseWindow(discordBox));
+    creditsButton.addEventListener('click', opencloseWindow(creditsBox));
     /*winampButton.addEventListener('click', e => {
       e.stopPropagation();
         webampApp.style.display = webampApp.style.display === 'block' ? 'none' : 'block';
@@ -647,24 +666,23 @@ volumeSlider.addEventListener('input', () => {
       "Mosh Pit": ["#000000", "#2f2f2f"],
       "Uranium Junkyard": ["#555555", "#f8f861"]
     };
-     const webampSkinMap = {
-  "Wired Lime": "skin1.wsz",         
-  "Terminal Tulip": "skin2.wsz",
-  "Take Cover": "skin3.wsz",
-  "Mosh Pit": "skin4.wsz",
-  "Uranium Junkyard": "skin5.wsz"
-};
-function changeSkin(skinName, newSkinData) {
-          document.querySelector(':root').style.setProperty('--skin-primary-color', newSkinData[0]);
+    const webampSkinMap = {
+      "Wired Lime": "skin1.wsz",
+      "Terminal Tulip": "skin2.wsz",
+      "Take Cover": "skin3.wsz",
+      "Mosh Pit": "skin4.wsz",
+      "Uranium Junkyard": "skin5.wsz"
+    };
+    function changeSkin(skinName, newSkinData) {
+      document.querySelector(':root').style.setProperty('--skin-primary-color', newSkinData[0]);
       document.querySelector(':root').style.setProperty('--skin-gradient-color', newSkinData[1]);
-    if (window.webamp && typeof window.webamp.setSkinFromUrl === 'function') {
-    window.webamp.setSkinFromUrl(webampSkinMap[skinName]);
-  }
-  if (storageAvailable("localStorage") && webampSkinMap[skinName]) {
-    localStorage.setItem("selectedWinampSkin", skinName);
-  }
-}
-
+      if (window.webamp && typeof window.webamp.setSkinFromUrl === 'function') {
+        window.webamp.setSkinFromUrl(webampSkinMap[skinName]);
+      }
+      if (storageAvailable("localStorage") && webampSkinMap[skinName]) {
+        localStorage.setItem("selectedWinampSkin", skinName);
+      }
+    }
     const skinList = document.getElementById("skin-list");
     for (let skin in skinDictionary) {
       let skinEntry = document.createElement("li");
@@ -677,38 +695,38 @@ function changeSkin(skinName, newSkinData) {
       skinEntry.addEventListener('mousedown', (e) => { changeSkin(skin, skinDictionary[skin]); });
     }
 
-// -------- custom skin window logic --------
-let customSkinDictionary = undefined; // we need to load in values if they already exist
-// check LocalStorage for the custom skin dictionary and load it if it exists
-if (storageAvailable("localStorage")) {
-  if (localStorage.getItem("customSkins")) {
-    customSkinDictionary = JSON.parse(localStorage.getItem("customSkins"));
-    for (let skin in customSkinDictionary) {
-      let skinEntry = document.createElement("li");
-      let skinText = document.createElement("p");
-      skinText.innerHTML = skin;
-      skinEntry.appendChild(skinText);
-      skinList.appendChild(skinEntry);
-      skinEntry.addEventListener('mouseover', () => { skinText.style.color = "#ffffff"; });
-      skinEntry.addEventListener('mouseleave', () => { skinText.style.color = "#000000"; });
-      skinEntry.addEventListener('mousedown', (e) => { changeSkin(skin, customSkinDictionary[skin]); });
+    // -------- custom skin window logic --------
+    let customSkinDictionary = undefined; // we need to load in values if they already exist
+    // check LocalStorage for the custom skin dictionary and load it if it exists
+    if (storageAvailable("localStorage")) {
+      if (localStorage.getItem("customSkins")) {
+        customSkinDictionary = JSON.parse(localStorage.getItem("customSkins"));
+        for (let skin in customSkinDictionary) {
+          let skinEntry = document.createElement("li");
+          let skinText = document.createElement("p");
+          skinText.innerHTML = skin;
+          skinEntry.appendChild(skinText);
+          skinList.appendChild(skinEntry);
+          skinEntry.addEventListener('mouseover', () => { skinText.style.color = "#ffffff"; });
+          skinEntry.addEventListener('mouseleave', () => { skinText.style.color = "#000000"; });
+          skinEntry.addEventListener('mousedown', (e) => { changeSkin(skin, customSkinDictionary[skin]); });
+        }
+      } else {
+        console.log("didn't find any custom skins already saved in the browser. that's fine, we can just make a blank dictionary");
+        customSkinDictionary = {};
+      }
+    } else {
+      console.log("uh oh... something went wrong trying to access browser's LocalStorage. making a new custom skin dictionary, but skins won't save.")
+      customSkinDictionary = {};
     }
-  } else {
-    console.log("didn't find any custom skins already saved in the browser. that's fine, we can just make a blank dictionary");
-    customSkinDictionary = {};
-  }
-} else {
-  console.log("uh oh... something went wrong trying to access browser's LocalStorage. making a new custom skin dictionary, but skins won't save.")
-  customSkinDictionary = {};
-}
-let skinNameElement = document.getElementById("custom-skin-name");
-let hex0Element = document.getElementById("custom-skin-primary");
-let hex1Element = document.getElementById("custom-skin-secondary");
-function validateHex(hexString) {
-  const hexPattern = /^#?([a-f0-9]{6}|[a-f0-9]{3})$/i // thanks github i think
-  // takes a given string and makes sure it's a valid hex code
-  return hexPattern.test(hexString);
-}
+    let skinNameElement = document.getElementById("custom-skin-name");
+    let hex0Element = document.getElementById("custom-skin-primary");
+    let hex1Element = document.getElementById("custom-skin-secondary");
+    function validateHex(hexString) {
+      const hexPattern = /^#?([a-f0-9]{6}|[a-f0-9]{3})$/i // thanks github i think
+      // takes a given string and makes sure it's a valid hex code
+      return hexPattern.test(hexString);
+    }
 
     function addSkin() {
       let newSkinName = skinNameElement.value
@@ -716,23 +734,23 @@ function validateHex(hexString) {
       let skinHex1 = hex1Element.value
       if (newSkinName.length == 0 || !(validateHex(skinHex0)) || !(validateHex(skinHex1))) return;
 
-  if (customSkinDictionary[newSkinName]) { return; } else { 
-    customSkinDictionary[newSkinName] = [skinHex0, skinHex1]; 
-    if (storageAvailable("localStorage")) {
-      localStorage.setItem("customSkins", JSON.stringify(customSkinDictionary));
-    }
-  }
+      if (customSkinDictionary[newSkinName]) { return; } else {
+        customSkinDictionary[newSkinName] = [skinHex0, skinHex1];
+        if (storageAvailable("localStorage")) {
+          localStorage.setItem("customSkins", JSON.stringify(customSkinDictionary));
+        }
+      }
 
-  let skinEntry = document.createElement("li");
-  let skinText = document.createElement("p");
-  skinText.innerHTML = newSkinName; // this would NOT BE A GOOD IDEA if it weren't for the fact that everything is client-side.
-  skinDictionary[newSkinName] = [skinHex0, skinHex1];
-  skinEntry.appendChild(skinText);
-  skinList.appendChild(skinEntry);
-  skinEntry.addEventListener('mouseover', () => { skinText.style.color = "#ffffff"; });
-  skinEntry.addEventListener('mouseleave', () => { skinText.style.color = "#000000"; });
-  skinEntry.addEventListener('mousedown', (e) => { changeSkin(newSkinName, skinDictionary[newSkinName]); });
-}
+      let skinEntry = document.createElement("li");
+      let skinText = document.createElement("p");
+      skinText.innerHTML = newSkinName; // this would NOT BE A GOOD IDEA if it weren't for the fact that everything is client-side.
+      skinDictionary[newSkinName] = [skinHex0, skinHex1];
+      skinEntry.appendChild(skinText);
+      skinList.appendChild(skinEntry);
+      skinEntry.addEventListener('mouseover', () => { skinText.style.color = "#ffffff"; });
+      skinEntry.addEventListener('mouseleave', () => { skinText.style.color = "#000000"; });
+      skinEntry.addEventListener('mousedown', (e) => { changeSkin(newSkinName, skinDictionary[newSkinName]); });
+    }
 
     document.getElementById("custom-skin-create").addEventListener('mousedown', (e) => { addSkin() });
 
@@ -759,37 +777,36 @@ function validateHex(hexString) {
       }
     }
 
-// -------- dynamic loading of images into gallery --------
-const galleryImages = galleryBox.querySelectorAll('img');
-galleryImages.forEach(img => {
-  img.addEventListener('click', () => {
-    wallpaper.style.background = `#000 url(${img.src}) no-repeat center center`;
-    wallpaper.style.backgroundSize = "100% 100%"; // 🔄 stretch to fit
-  });
-});
+    // -------- dynamic loading of images into gallery --------
+    const galleryImages = galleryBox.querySelectorAll('img');
+    galleryImages.forEach(img => {
+      img.addEventListener('click', () => {
+        wallpaper.style.background = `#000 url(${img.src}) no-repeat center center`;
+        wallpaper.style.backgroundSize = "100% 100%"; // 🔄 stretch to fit
+      });
+    });
 
-// -------- template external code --------
-// example check function for LocalStorage as found on https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API#feature-detecting_localstorage
-function storageAvailable(type) {
-  let storage;
-  try {
-    storage = window[type];
-    const x = "__storage_test__";
-    storage.setItem(x, x);
-    storage.removeItem(x);
-    return true;
-  } catch (e) {
-    return (
-      e instanceof DOMException &&
-      e.name === "QuotaExceededError" &&
-      // acknowledge QuotaExceededError only if there's something already stored
-      storage &&
-      storage.length !== 0
-    );
-  }
-}
-</script>
-
+    // -------- template external code --------
+    // example check function for LocalStorage as found on https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API#feature-detecting_localstorage
+    function storageAvailable(type) {
+      let storage;
+      try {
+        storage = window[type];
+        const x = "__storage_test__";
+        storage.setItem(x, x);
+        storage.removeItem(x);
+        return true;
+      } catch (e) {
+        return (
+          e instanceof DOMException &&
+          e.name === "QuotaExceededError" &&
+          // acknowledge QuotaExceededError only if there's something already stored
+          storage &&
+          storage.length !== 0
+        );
+      }
+    }
+  </script>
 </body>
 
 </html>
