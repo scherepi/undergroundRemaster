@@ -273,11 +273,6 @@
       text-align: center;
     }
 
-    #earnmoney-box {
-      width: 500px;
-      height: 500px;
-    }
-
     #credits-blurb {
       font-family: 'W95', 'VT323', monospace;
       font-weight: 400;
@@ -507,7 +502,6 @@
       <li><a href="https://projectradio.org/radio/projectfm">Project.fm</a></li>
       <li><a href="https://projectradio.org/radio/ruggedraw94">RuggedRaw.94</a></li>
       <li><a href="https://projectradio.org/radio/dogstar">DogStar</a></li>
-      <li id="earnmoney"><a href="#">Earn Money</a></li>
     </ul>
   </div>
 
@@ -550,34 +544,6 @@
     </div>
   </div>
 
-  <div class="window-box" id="earnmoney-box" style="display:none; top:200px; left:200px;">
-    <div class="window-header" id="earnmoney-header">This man's name is Earn Money</div>
-    <div class="window-content" id="earnmoney-content">
-      <canvas id="earnmoney-canvas" width=475 height=445></canvas>
-    </div>
-    <script type="module">
-      main();
-      // WebGL code to bring the beautiful Earn Money to life.
-      function main() {
-        const canvas = document.getElementById('earnmoney-canvas');
-        const gl = canvas.getContext('webgl');
-
-        if (gl === null) {
-          // WebGL is not available or not working. we'll just put the flat image of Earn Money. it'll have to do...
-          canvas.remove();
-          const img = document.createElement('img');
-          img.setAttribute('src', 'imgs/earnmoney.png');
-          img.setAttribute('height', 445);
-          img.setAttribute('width', 475);
-          document.getElementById("earnmoney-content").append(img);
-        }
-
-        gl.clearColor(0.0, 0.0, 0.0, 1.0); // set clear color to fully opaque black
-        gl.clear(gl.COLOR_BUFFER_BIT);
-      }
-    </script>
-  </div>
-
   <div class="window-box" id="credits-box" style="display:none; top:200px; left:200px;">
     <div class="window-header" id="credits-header">Task Manager</div>
     <div class="window-content" id="credits-content">
@@ -606,8 +572,6 @@
     const discordBox = document.getElementById('discord-box');
     const creditsButton = document.getElementById('credits-button');
     const creditsBox = document.getElementById('credits-box');
-    const earnMoneyButton = document.getElementById('earnmoney');
-    const earnMoneyBox = document.getElementById('earnmoney-box');
     const winampButton = document.getElementById('winamp-button');
     const webampApp = document.getElementById('app');
     const wallpaper = document.getElementById('wallpaper');
@@ -648,7 +612,6 @@
     skinButton.addEventListener('click', opencloseWindow(skinBox));
     customSkinButton.addEventListener('click', opencloseWindow(customSkinBox));
     discordButton.addEventListener('click', opencloseWindow(discordBox));
-    earnMoneyButton.addEventListener('click', opencloseWindow(earnMoneyBox));
     creditsButton.addEventListener('click', opencloseWindow(creditsBox));
     /*winampButton.addEventListener('click', e => {
       e.stopPropagation();
