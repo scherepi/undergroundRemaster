@@ -555,8 +555,26 @@
     <div class="window-content" id="earnmoney-content">
       <canvas id="earnmoney-canvas" width=475 height=445></canvas>
     </div>
-    <script type="module" src="scripts/earnmoney.js">
-      
+    <script type="module">
+      main();
+      // WebGL code to bring the beautiful Earn Money to life.
+      function main() {
+        const canvas = document.getElementById('earnmoney-canvas');
+        const gl = canvas.getContext('webgl');
+
+        if (gl === null) {
+          // WebGL is not available or not working. we'll just put the flat image of Earn Money. it'll have to do...
+          canvas.remove();
+          const img = document.createElement('img');
+          img.setAttribute('src', 'imgs/earnmoney.png');
+          img.setAttribute('height', 445);
+          img.setAttribute('width', 475);
+          document.getElementById("earnmoney-content").append(img);
+        }
+
+        gl.clearColor(0.0, 0.0, 0.0, 1.0); // set clear color to fully opaque black
+        gl.clear(gl.COLOR_BUFFER_BIT);
+      }
     </script>
   </div>
 
