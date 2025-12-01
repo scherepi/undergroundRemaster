@@ -279,6 +279,17 @@
       font-style: normal;
     }
 
+    .credits-box {
+      border: 1px solid black;
+      background: linear-gradient(to bottom, #c0c0c0 0%, #a0a0a0 100%);
+    }
+
+    .credits-box span {
+      font-style: italic;
+      text-align: center;
+      width: 100%;
+    }
+
     @media (max-width: 500px) {
       .speaker-icon {
         width: 24px;
@@ -547,9 +558,25 @@
   <div class="window-box" id="credits-box" style="display:none; top:200px; left:200px;">
     <div class="window-header" id="credits-header">Task Manager</div>
     <div class="window-content" id="credits-content">
-      <p id="credits-blurb">task managing is hard as fuck. project radio rocks. here are the people that brought you
-        this kickass site:</p>
-      <div id="credits-list"></div>
+      <p id="credits-blurb">project radio rocks. here are the people who brought you this kickass site:</p>
+      <div id="credits-list">
+          <div id="merlin-credit" class="credits-box">
+            <span>merlin</span>
+            <p>the grand mastermind themself - big dawg behind PR as a whole</p>
+          </div>
+          <div id="autumn-credit" class="credits-box">
+            <span>autumn</span>
+            <p>backend blacksmith and DJ extraordinaire</p>
+          </div>
+          <div id="lou-credit" class="credits-box">
+            <span>v1peridae</span>
+            <p>webamp wizard and tastemaker supreme</p>
+          </div>
+          <div id="guac-credit" class="credits-box">
+            <span>guac</span>
+            <p>front-end fool and general jester</p>
+          </div>
+      </div>
     </div>
   </div>
   <script>
@@ -676,7 +703,7 @@
     function changeSkin(skinName, newSkinData) {
       document.querySelector(':root').style.setProperty('--skin-primary-color', newSkinData[0]);
       document.querySelector(':root').style.setProperty('--skin-gradient-color', newSkinData[1]);
-      if (window.webamp && typeof window.webamp.setSkinFromUrl === 'function') {
+      if (window.webamp && typeof window.webamp.setSkinFromUrl === 'function' && webampSkinMap[skinName]) {
         window.webamp.setSkinFromUrl(webampSkinMap[skinName]);
       }
       if (storageAvailable("localStorage") && webampSkinMap[skinName]) {
