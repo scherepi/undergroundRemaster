@@ -16,10 +16,10 @@
 
 		<style>
 :root {
-  --base:url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><defs><pattern patternUnits="userSpaceOnUse" id="c" width="10.5" height="7" x="0" y="0" viewBox="0 0 30 20"><path d="M0,10h5l5,-10h10l5,10h5m-5,0l-5,10h-10l-5,-10" stroke="%23909090" stroke-width="0.6" fill-opacity="0" /></pattern></defs><rect width="100%" height="100%" fill="url(%23c)"/></svg>');
+  --base:url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><defs><pattern patternUnits="userSpaceOnUse" id="c" width="10.5" height="7" x="0" y="0" viewBox="0 0 30 20"><path d="M0,10h5l5,-10h10l5,10h5m-5,0l-5,10h-10l-5,-10" stroke="%23909090" stroke-width="0.3" fill-opacity="0" /></pattern></defs><rect width="100%" height="100%" fill="url(%23c)"/></svg>');
 }
 
-body{padding-bottom:10vh;line-height:2;overflow-x:hidden;background:var(--base),#1f3920;background-position:top right;background-size:cover;background-attachment: fixed;font-family:"W95font","Press Start 2P",serif;color:#3b5a26;}
+body{padding-bottom:10vh;line-height:2;overflow-x:hidden;background:var(--base),#1f3920;background-position:top right;background-size:cover;background-attachment: fixed;font-family:"W95font",serif;color:#3b5a26;}
 
 header,menu,main,footer,details a{display:block;}
 header{height:100px;background:linear-gradient(to bottom, #3b5a26, #1f3920);margin:-10px -10px -6px -10px;}
@@ -29,26 +29,28 @@ header img{display:inline;height:50px;}
 /* calc(50% - (50 width of Vandal + 10 width of scrollbar + 125 half of logo width)) */
 .headerlogo{height:auto;width:250px;margin:-20px calc(50% - 175px) 0 calc(50% - 175px);}
 
-menu p, menu details a,summary{font-size:.8em;border:none;color:#EEE;}
-menu{background:linear-gradient(to bottom, #3b5a26, #1f3920);width:110%;padding:1em 0 1em 15%;margin:-6px 0 0 -10%;}
-menu a{margin:0 .5em;padding:0 1em;color:#DDD;font-size:1.5em;text-decoration:none;transition: margin 1s ease-in-out, color 2s ease-in-out;}
-menu a:hover{margin:0 2.5em;color:#AAA8;}
-
-::details-content{transition:height 0.5s ease,content-visibility 0.5s ease allow-discrete;height:0;}
-[open]::details-content{height:9em;}
+menu p, menu a{font-size:.8em;border:none;color:#EEE;}
+menu{background:linear-gradient(to bottom, #3b5a26, #1f3920);width:110%;padding:.1em 0 .1em 15%;margin:-6px 0 0 -10%;}
+menu a{margin:0;padding:0;color:#DDD;font-size:1em;text-decoration:underline;transition: color 1s ease-in-out;}
+menu a:hover{color:#AAA8;}
 
 hr{background-image:linear-gradient(to right,transparent,#000,transparent);height:1px;width:70%;margin:7px 15%;border:0;}
 .heavy{height:3px;}
 
 div{height:auto;display:flex;justify-content:center;}
 article{margin:3px 0 0 0;display:flex;flex-flow:row wrap;justify-content:space-evenly;align-items:flex-start;}
-section{margin:1%;border:1px solid #333;font-size:1.5em;background:linear-gradient(to bottom, #3b5a26 1em, #1f3920 2em, #DFD 2.01em);padding:0 2em 1em 2em;width:250px;}
+section{margin:1%;border:4px ridge #1f3920;font-size:1.5em;background:linear-gradient(to bottom, #3b5a26 14px, #1f3920 26px, #DFD 27px);width:auto;}
 .double{width:calc(502px + 2% + 4em);}
-h2{font-size:1em;font-weight:normal;margin-top:0;text-align:center;color:#FFF;}
-span, section p{font-size:.5em;}
-img.profile{display:block;margin:auto;height:auto;width:90%;}	
+h2{background:url(closeicon.svg) calc(100% - .2em) 70% no-repeat,transparent;font-size:16px;font-weight:normal;margin-top:-3px;height:27px;border-bottom:4px ridge #1f3920;text-align:left;color:#FFF;}
+span, section p,li{font-size:.5em;margin:0 2em 1em 2em;}
+img.profile{display:block;margin:auto;height:auto;width:200px;}	
 .data::before,.data:before{content:attr(data-type);margin-right:.55em;}
 span.data{font-weight:normal;}
+.foldersvg{margin-bottom:0;display:block;height:80px;width:52px;}
+.foldertxt{margin-top:0;text-decoration:none;display:block;}
+.filesvg{margin:.2em;height:1em;width:1em;display:inline;vertical-align:-5px;}
+a.desktop{text-decoration:none;width:52px;height:50px;display:block;margin-bottom:30px;overflow:hidden;}
+a.desktop:focus{height:80px;margin-bottom:0;overflow:visible;}
 
 @media handheld{section,.double{width:96%;}}
 		</style>
@@ -60,70 +62,115 @@ span.data{font-weight:normal;}
 		
 		<menu>
 		<!-- I'm thinking that Project Radio can have it's own in-universe intranet, similar to the corporations in Cyberpunk 2077, but used as an underground, off-the-main-grid tool by Project Radio. Dossiers are just how Vandal tracks potential new members, targets, and current members -->
-		<p>Directory: PR:// &#x003E; Dossier &#x003E; Member &#x003E; Naomi</p>
-		<details><summary>Navigation</summary>
-		<a href="[]">^^^ PR:// (Project Radio Main Directory)</a>
-		<a href="[]">^^ Dossier</a>
-		<a href="[]">^ Member Dossier</a>
-		<a href="">&#x003E; Naomi</a>
-		<a href="[]">&#x003E; [Additional Member Dossiers should be added to this list]</a>
-		</details>
+		<p>Directory: <a href="[]" title="Project Radio Main Directory" class="dir">PR://</a><a href="[]" title="Dossiers" class="dir">Dossiers/</a><a href="[]" title="Member Dossiers" class="dir">Member Dossiers/</a><a href="" title="Naomi" class="dir">Naomi</a></p>
 		</menu>
 		
-
-		<div id="drop-target">
+		<br /><br />
+		<a href="#mugshot-window" id="mugshot-folder" class="desktop" title="Mugshot"><img src="mugshot.svg" class="foldersvg"/></a>
+		<a href="#profile-window" id="profile-folder" class="desktop" title="Profile"><img src="profile.svg" class="foldersvg"/></a>
+		<a href="#phys-appear-window" id="phys-appear-folder" class="desktop" title="Physical Appearance"><img src="phys-appear.svg" class="foldersvg"/></a>
+		<a href="#present-window" id="present-folder" class="desktop" title="Presentation"><img src="present.svg" class="foldersvg"/></a>
+		<a href="#event-window" id="event-folder" class="desktop" title="Events"><img src="event.svg" class="foldersvg"/></a>
+		<a href="#note-window" id="note-folder" class="desktop" title="Additional Remarks"><img src="note.svg" class="foldersvg"/></a>
+		
+		<div>
 			<article>
-				<section id="mugshot-header" class="mugshot-header" draggable="true">
-					<h2>Mugshot</h2>
+			<!--  Adding draggable="true" to each section allows the window to be selected and dragged, but not dropped, and nothing in the section can be selected. But without draggable="true", the sections can't be selected or dragged or dropped, but the contents can be selected. If the sections start out as display:none; they will not display, even when the folder is clicked. It's almost as if the script doesn't run at all, although it's copied and pasted from the undergroundfm page, with the id's changed for the DOM ID and Winamp and Winamp skins removed from the script. I've tried all sorts of different CSS thinking maybe it was a default attribute (like display:block; or display:inline;) throwing it off and breaking the script, but I'm out of ideas on it. New problem: clicked anywhere or anything on the entire webpage causes the mugshot section or the profile section or both to disappear and nothing brings them back. -->
+				<section id="mugshot-window">
+					<h2><img src="imageicon.svg" class="filesvg"/>Mugshot</h2>
+					<figure>
 					<img src="https://projectradio.org/Articles/NAVTICLE.png" class="profile" />
+					</figure>
 				</section>
-				<section draggable="true">
-					<h2>Profile</h2>
-					<span data-type="Full Name:" class="data">Naomi</span><br />
-					<span data-type="Alias:" class="data">Naomi</span><br />
-					<span data-type="Status:" class="data">Member</span><br />
-					<span data-type="Date of Birth:" class="data">UNK</span><br />
-					<span data-type="Place of Birth:" class="data">UNK</span><br />
+				<section id="profile-window">
+					<h2><img src="docicon.svg" class="filesvg"/>Profile</h2>
+					<figure>
+					<p data-type="Full Name:" class="data">Naomi</p>
+					<p data-type="Alias:" class="data">Naomi</p>
+					<p data-type="Status:" class="data">Member</p>
+					<p data-type="Date of Birth:" class="data">UNK</p>
+					<p data-type="Place of Birth:" class="data">UNK</p>
+					</figure>
 				</section>
-				<section draggable="true">
-					<h2>Physical Appearance</h2>
-					<span data-type="Height:" class="data">UNK</span><br />
-					<span data-type="Weight:" class="data">UNK</span><br />
-					<span data-type="Build:" class="data">Slender</span><br />
-					<span data-type="Distinguishing Marks:" class="data">
-					<ul><li>Cat ears</li><li>Ear (helix, multiple) and navel ring piercings</li><li>Tail</li><li>Cat feet</li></ul></span>
-					<span data-type="Hair Color:" class="data">Platinum blonde</span><br />
-					<span data-type="Eye Color:" class="data">Yellow</span><br />
-					<span data-type="Chassis Color:" class="data">N/A</span><br />
-					<span data-type="Modifications:" class="data">
-					<ul><li>Gene-splicing, feline DNA</li></ul></span><br />
+				<section id="phys-appear-window">
+					<h2><img src="docicon.svg" class="filesvg"/>Physical Appearance</h2>
+					<figure>
+					<p data-type="Height:" class="data">UNK</p>
+					<p data-type="Weight:" class="data">UNK</p>
+					<p data-type="Build:" class="data">Slender</p>
+					<p data-type="Distinguishing Marks:" class="data">
+					<ul><li>Cat ears</li><li>Ear (helix, multiple) and navel ring piercings</li><li>Tail</li><li>Cat feet</li></ul></p>
+					<p data-type="Hair Color:" class="data">Platinum blonde</p>
+					<p data-type="Eye Color:" class="data">Yellow</p>
+					<p data-type="Chassis Color:" class="data">N/A</p>
+					<p data-type="Modifications:" class="data">
+					<ul><li>Gene-splicing, feline DNA</li></ul></p>
+					</figure>
 				</section>
-				<section draggable="true">
-					<h2>Presentation</h2>
-					<span data-type="Occupation/Role:" class="data">
-					<ul><li>Recon</li><li>Combat (close-quarters)</li><li>Cybersecurity Infiltration</li></ul></span>
-					<span data-type="Gender:" class="data">Woman</span><br />
-					<span data-type="Clothing:" class="data"></span><br />
+				<section id="present-window">
+					<h2><img src="docicon.svg" class="filesvg"/>Presentation</h2>
+					<figure>
+					<p data-type="Occupation/Role:" class="data">
+					<ul><li>Recon</li><li>Combat (close-quarters)</li><li>Cybersecurity Infiltration</li></ul></p>
+					<p data-type="Gender:" class="data">Woman</p>
+					<p data-type="Clothing:" class="data"></p>
 					<p>[Just describe her overall style in a paragraph or as a couple of words]</p>
-					<span data-type="Talents, Skills, and Personality Traits:" class="data">
-					<ul><li>Custom TEC-9 (how skilled is she?)</li><li>Heightened Reflexes</li><li>Enhanced Vision</li><li>Honest</li><li>Stealthy</li><li>Perfect Timing</li><li>Acrobatic</li><li>Efficient</li></ul></span>
+					<p data-type="Talents, Skills, and Personality Traits:" class="data">
+					<ul><li>Custom TEC-9 (how skilled is she?)</li><li>Heightened Reflexes</li><li>Enhanced Vision</li><li>Honest</li><li>Stealthy</li><li>Perfect Timing</li><li>Acrobatic</li><li>Efficient</li></ul></p>
+					</figure>
 				</section>
-				<section class="double" draggable="true">
-					<h2>Events</h2>
-					<span data-type="Interactions:" class="data"><br />In early 2009, I experienced an intrusion unlike any previous attempt. The attacker moved with feline silence and supernatural timing, vaulting service conduits, neutralising motion sensors and delivering a targeted code injection into our comm-hub that should have taken days to assemble. She was traced to a rooftop access corridor where our I intercepted her.<br />&#x2004;&#x2004;&#x2004; _Vandal / [date-time-group (dtg) of entry, formatted as YYYY-MM-DDThh:mmTZD (eg 1997-07-16T19:20+01:00)]</span><hr class="heavy" />
-					<span data-type="Evaluations:" class="data"><br />I expected a corporate asset or a state backed breaker. I did not expect a half human operative, nor someone with the audacity to hack into our own heartbeat and then stand and admit it. The subject identified herself as Naomi. She neither fled nor resisted; instead she displayed tactical patience and a clarity about our vulnerabilities.<br />
-					Given the stakes... and the capability she demonstrated, I made an unprecedented operational decision. Recruit rather than to eliminate.<br />
-					&#x2004;&#x2004;&#x2004; _Vandal / [dtg of entry]</span><br />
+				<section class="double" id="event-window">
+					<h2><img src="docicon.svg" class="filesvg"/>Events</h2>
+					<figure>
+					<p data-type="Interactions:" class="data"></p>
+					<p>In early 2009, I experienced an intrusion unlike any previous attempt. The attacker moved with feline silence and supernatural timing, vaulting service conduits, neutralising motion sensors and delivering a targeted code injection into our comm-hub that should have taken days to assemble. She was traced to a rooftop access corridor where I intercepted her.</p>
+					<p>&#x2004;&#x2004;&#x2004; _Vandal / [date-time-group (dtg) of entry, formatted as YYYY-MM-DDThh:mmTZD (eg 1997-07-16T19:20+01:00)]</p>
+					<hr class="heavy" />
+					<p data-type="Evaluations:" class="data"></p>
+					<p>I expected a corporate asset or a state backed breaker. I did not expect a half human operative, nor someone with the audacity to hack into our own heartbeat and then stand and admit it. The subject identified herself as Naomi. She neither fled nor resisted; instead she displayed tactical patience and a clarity about our vulnerabilities.</p>
+					<p>Given the stakes... and the capability she demonstrated, I made an unprecedented operational decision. Recruit rather than to eliminate.</p>
+					<p>&#x2004;&#x2004;&#x2004; _Vandal / [dtg of entry]</p>
+					</figure>
 				</section>
-				<section class="double" draggable="true">
-					<h2>Additional Remarks</h2>
-					<span data-type="" class="data"><br />
-					Born in the shadows of The City, Naomi was the product of an illegal splicing experiment that fused feline DNA with human resilience. Her heightened reflexes, silent movement, and enhanced vision made her a natural operative long before she chose a side. When corporate enforcers wiped out her neighbourhood during a "data reclamation" raid, Naomi vanished into the city’s underbelly.<br />
-					Recruited by Project RADIO, Naomi became one of their most unpredictable assets. Armed with her custom TEC-9, and her recon skills, she blends close-quarters combat with digital infiltration.</span><br />
+				<section class="double" id="note-window">
+					<h2><img src="docicon.svg" class="filesvg"/>Additional Remarks</h2>
+					<figure>
+					<p data-type="Notes:" class="data"></p>
+					<p>Born in the shadows of The City, Naomi was the product of an illegal splicing experiment that fused feline DNA with human resilience. Her heightened reflexes, silent movement, and enhanced vision made her a natural operative long before she chose a side. When corporate enforcers wiped out her neighbourhood during a "data reclamation" raid, Naomi vanished into the city’s underbelly.</p>
+					<p>Recruited by Project RADIO, Naomi became one of their most unpredictable assets. Armed with her custom TEC-9, and her recon skills, she blends close-quarters combat with digital infiltration.</p>
+					</figure>
 				</section>
 			</article>
 		</div>
 			<script data="drag and drop">
+	/* DOM ID */
+	
+    const mugshotButton = document.getElementById('mugshot-folder');
+    const mugshotBox = document.getElementById('mugshot-window');
+    const profileButton = document.getElementById('profile-folder');
+    const profileBox = document.getElementById('profile-window');
+    const physAppearButton = document.getElementById('phys-appear-folder');
+    const physAppearSkinBox = document.getElementById('phys-appear-window');
+    const presentButton = document.getElementById('present-folder');
+    const presentBox = document.getElementById('present-window');
+    const creditsButton = document.getElementById('event-folder');
+    const creditsBox = document.getElementById('event-window');
+    const earnMoneyButton = document.getElementById('note-folder');
+    const earnMoneyBox = document.getElementById('note-window');
+	
+	/* hide window */
+	
+    document.addEventListener('click', e => {
+      if (!mugshotBox.contains(e.target) && e.target !== mugshotButton) mugshotBox.style.display = 'none';
+      if (!profileBox.contains(e.target) && e.target !== profileButton) profileBox.style.display = 'none';
+	  if (!physAppearBox.contains(e.target) && e.target !== physAppearButton) physAppearBox.style.display = 'none';
+	  if (!presentBox.contains(e.target) && e.target !== presentButton) presentBox.style.display = 'none';
+	  if (!eventBox.contains(e.target) && e.target !== eventButton) eventBox.style.display = 'none';
+	  if (!noteBox.contains(e.target) && e.target !== noteButton) noteBox.style.display = 'none';
+    });
+	
+	/* drag and drop */
+	
     document.querySelectorAll(".window-header").forEach((header) => {
       const elementBox = header.parentElement;
       let isDragging = false, startX = 0, startY = 0, origX = 0, origY = 0;
@@ -155,3 +202,5 @@ span.data{font-weight:normal;}
 			</script>
 	</body>
 </html>
+
+
