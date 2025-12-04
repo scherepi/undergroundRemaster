@@ -277,17 +277,59 @@
       font-family: 'W95', 'VT323', monospace;
       font-weight: 400;
       font-style: normal;
+      margin-top: 0;
+      margin-bottom: 8px;
+    }
+
+    #credits-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 320px;
+      overflow-y: auto;
+      padding-right: 4px;
     }
 
     .credits-box {
-      border: 1px solid black;
-      background: linear-gradient(to bottom, #c0c0c0 0%, #a0a0a0 100%);
+      background: linear-gradient(to bottom, #d4d4d4 0%, #b0b0b0 100%);
+      border: 2px solid #808080;
+      box-shadow: 1px 1px 0 #fff inset, -1px -1px 0 #404040 inset;
+      padding: 6px 8px;
+      font-family: 'W95', 'VT323', monospace;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      cursor: default;
     }
 
     .credits-box span {
-      font-style: italic;
-      text-align: center;
-      width: 100%;
+      display: block;
+      font-weight: bold;
+      text-transform: lowercase;
+      letter-spacing: 0.5px;
+      text-align: left;
+    }
+
+    .credits-box p {
+      margin: 0;
+      font-size: 13px;
+    }
+
+    .credits-link {
+      display: block;
+      color: inherit;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .credits-link:hover .credits-box {
+      background: linear-gradient(to bottom, #f0f0f0 0%, #c8c8c8 100%);
+      box-shadow: 1px 1px 0 #fff inset, -1px -1px 0 #404040 inset, 0 0 0 1px #00000033;
+    }
+
+    .credits-box:hover {
+      background: linear-gradient(to bottom, #f0f0f0 0%, #c8c8c8 100%);
+      box-shadow: 1px 1px 0 #fff inset, -1px -1px 0 #404040 inset, 0 0 0 1px #00000033;
     }
 
     @media (max-width: 500px) {
@@ -560,21 +602,27 @@
     <div class="window-content" id="credits-content">
       <p id="credits-blurb">project radio rocks. here are the people who brought you this kickass site:</p>
       <div id="credits-list">
-          <div id="merlin-credit" class="credits-box">
-            <span>merlin</span>
-            <p>the grand mastermind themself - big dawg behind PR as a whole</p>
-          </div>
-          <div id="autumn-credit" class="credits-box">
-            <span>autumn</span>
-            <p>backend blacksmith and DJ extraordinaire</p>
-          </div>
-          <div id="lou-credit" class="credits-box">
-            <span>v1peridae</span>
-            <p>webamp wizard and tastemaker supreme</p>
-          </div>
+          <a id="merlin-credit" class="credits-link" href="https://projectradio.org/artists/profile/merlin" target="_blank" rel="noopener noreferrer">
+            <div class="credits-box">
+              <span>merlin</span>
+              <p>the grand mastermind themself - big dawg behind PR as a whole</p>
+            </div>
+          </a>
+          <a id="autumn-credit" class="credits-link" href="https://projectradio.org/artists/profile/deepin" target="_blank" rel="noopener noreferrer">
+            <div class="credits-box">
+              <span>autumn</span>
+              <p>backend blacksmith and DJ extraordinaire</p>
+            </div>
+          </a>
+
           <div id="guac-credit" class="credits-box">
             <span>guac</span>
             <p>front-end fool and general jester</p>
+          </div>
+
+          <div id="lou-credit" class="credits-box">
+            <span>v1peridae</span>
+            <p>webamp wizard and tastemaker supreme</p>
           </div>
       </div>
     </div>
