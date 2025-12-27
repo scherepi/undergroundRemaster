@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/x-icon" href="https://projectradio.org/rah.ico">
+  <title>Artist Uplink</title>
+  <link rel="stylesheet" href="artist.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+      <a href="https://projectradio.org">
+        <img src="https://projectradio.org/projectR-ver1.0.png" alt="Uplink Menu" class="sidebar-logo">
+      </a>
+      <nav>
+        <a href="/artists/uplink.html">Uplink</a>
+        <a href="/artists/profiles.html">Profile List</a>
+        <a href="#" id="randomProfileBtn">Random Profile</a>
+        <a href="https://discord.gg/GZ65Px3RHy">Chatroom</a>
+        <a href="/index.html">Return to Radio</a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <section class="xp-window full-width-box">
+        <div class="xp-titlebar">
+          <center><span class="title-text">WELCOME TO ARTIST UPLINK</span></center>
+        </div>
+        <div class="xp-body">
+          <p class="description">
+            This is your gateway to the retro social scene. Dive into profiles, updates, and works by your favorite artists. Each link takes you deeper into Project Radio’s creative orbit.
+            <br><br>
+            The Artist Uplink is a creative hub built for artists, by artists. It’s a place to share your work, connect with others, and discover fresh inspiration. Every month, we feature a new lineup of talented creators, shining a spotlight on diverse styles and voices from the community. 
+          </p>
+        </div>
+      </section>
+
+      <div class="content-row">
+        <section class="xp-window featured-box">
+          <div class="xp-titlebar">
+            <center><span class="title-text">FEATURED ARTIST</span></center>
+          </div>
+          <div class="xp-body">
+            <div class="featured-layout">
+              <a href="https://projectradio.org/artists/profile/kaiaradio" class="artist-profile featured-image">
+                <img src="https://projectradio.org/artists/images/3dgifmaker46940.gif"/>
+                <div class="artist-info">
+                  <div class="artist-name">Miles DeVoe</div>
+                  <div class="artist-bio">I'm an nintendo inspired composer  who aims to compose various genres including jazz fusion, shibuya-kei and more!!!! I also make art for my projects and for others sometimes :-)</div>
+                </div>
+              </a>
+              <p class="featured-text"> I’ve come to make an announcement: Shadow the Hedgehog’s a bitch-ass motherfucker. He pissed on my fucking wife. That’s right, he took his hedgehog fucking quilly dick out and he pissed on my fucking wife, and he said his dick was this big. And I said “that’s disgusting!” So I’m making a callout post on my Twitter dot com: "Shadow the Hedgehog, you got a small dick, it’s the size of this walnut except way smaller." And guess what, here’s what my dong looks like: PFFFFFFFFGJT. That’s right baby. All points, no quills, no pillows, look at that it looks like two balls and a bong. He fucked my wife so guess what, I’m gonna fuck the earth. That's right this is what you get, my super laser piss. Except I’m not gonna piss on the earth, I’m gonna go higher. I’m pissing on the moon! How do you like that, Obama? I pissed on the moon, you idiot! You have twenty-three hours before the piss droplets hit the fucking earth, now get out of my fucking sight before I piss on you too!
+            </div>
+          </div>
+          
+        </section>
+      </div> 
+
+      <div class="wall-post">
+        <div class="post-header">
+          <img src="https://projectradio.org/artists/images/vand4ll_head.gif" alt="User profile picture" class="post-avatar">
+          <div class="post-meta">
+            <span class="post-author">VANDAL</span>
+            <span class="post-date">Posted on August 11, 2025</span>
+          </div>
+        </div>
+        <div class="post-body">
+          <p>If you want to interact with the community live, join our Discord chatroom.</p>
+        </div>
+      </div>
+
+      <footer class="footer">
+        Artist Uplink provided to us and by us at Project Radio. Thank you all for the hard work and dedication for making this a possibility.
+        Please keep in mind that this site and all of Project Radio is intended to be viewed on desktop, some mobile displays may not work as intended!
+      </footer>
+
+      <script>
+        const profiles = [
+          "/artists/profile/Aerrow.html",
+          "/artists/profile/Balynsus.html",
+          "/artists/profile/carrionhaven.html",
+          "/artists/profile/carrophobia.html",
+          "/artists/profile/chonoes.html",
+          "/artists/profile/djuno.html",
+          "/artists/profile/deepin.html",
+          "/artists/profile/joVee.html",
+          "/artists/profile/merlin.html",
+          "/artists/profile/richardFigures.html",
+          "/artists/profile/stoats.html",
+          "/artists/profile/yvngbandoboy.html",
+          "/artists/profile/vand4ll.html",
+          "/artists/profile/kaiaradio.html"
+        ];
+
+        document.getElementById("randomProfileBtn").addEventListener("click", function(e) {
+          e.preventDefault();
+          const randomIndex = Math.floor(Math.random() * profiles.length);
+          window.location.href = profiles[randomIndex];
+        });
+
+        const uplinkBox = document.querySelector('.uplink-box');
+        const images = [
+          "https://projectradio.org/artists/images/balynsus_head1.png",
+          "https://projectradio.org/artists/images/carrionhaven_head.png",
+          "https://projectradio.org/artists/images/carro_head2.png",
+          "https://projectradio.org/artists/images/djuno_head.jpg",
+          "https://projectradio.org/artists/images/balynsus_head.png",
+          "https://projectradio.org/artists/images/jovee_head1.png",
+          "https://projectradio.org/artists/images/iamhatehehe.png",
+          "https://projectradio.org/artists/images/stoats_head.png",
+          "https://projectradio.org/artists/images/vand4ll_head.gif",
+          "https://projectradio.org/artists/images/merlin_head.png",
+          "https://projectradio.org/artists/images/deepin_head.png",
+          "https://projectradio.org/artists/images/chonoes_head.jpg",
+          "https://dickfigures.net/projectradio/b1.png",
+          "https://i1.sndcdn.com/avatars-adqw5wrz9wh61J5u-OwJvxA-t500x500.jpg"
+        ];
+        let index = 0;
+        function changeBackground() {
+          uplinkBox.style.setProperty('--uplink-bg', `url(${images[index]}) center/cover no-repeat`);
+          index = (index + 1) % images.length;
+        }
+        changeBackground();
+        setInterval(changeBackground, 4000);
+      </script>
+
+    </main>
+  </div>
+</body>
+</html>
