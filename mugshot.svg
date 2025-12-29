@@ -1,0 +1,21 @@
+<?xml version="1.0" standalone="no"?>
+<svg width="52" height="80" version="2.0" xmlns="http://www.w3.org/2000/svg">
+<defs><style>
+.manila{stroke-width:1;stroke:#f1d592;fill:#f1d592;}
+.shadow{stroke-width:2;stroke:#75570f;fill:#75570f;}
+.highlight{stroke-width:1;stroke:#f8e9c6;fill:#f8e9c6;}
+.icodke{stroke-width:1;stroke:#75570f;fill:#f8e9c6;}
+.icodkf{stroke-width:1;stroke:#75570f;fill:#75570f;}
+text{stroke:0;fill:#FFF;font-family:"W95font";font-size:12px;}
+</style></defs>
+<line x1="46" y1="10" x2="46" y2="32" class="shadow" />
+<line x1="46" y1="31" x2="10" y2="31" class="shadow" />
+<path d="M 15 5, 25 5, 30 10, 45 10, 45 30, 10 30, 10 10 Z" class="manila" />
+<line x1="45.5" y1="10" x2="9.5" y2="10" class="highlight" />
+<line x1="10" y1="9.5" x2="10" y2="30.5" class="highlight" />
+<line x1="15" y1="5" x2="25" y2="5" class="highlight" />
+<path d="M 23 15, 33 15, 33 25, 23 25 Z" class="icodke" />
+<path d="M 25.5 25, 30.5 25, 28 22.5 Z" class="icodkf" />
+<circle cx="28" cy="21" r="1.5" class="icodkf" />
+<text x="4" y="47">Mugshot</text>
+</svg>

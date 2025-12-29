@@ -1,0 +1,12 @@
+<?xml version="1.0" standalone="no"?>
+<svg width="14" height="14" version="2.0" xmlns="http://www.w3.org/2000/svg">
+<defs><style>
+.icodke{stroke-width:1.2;stroke:#1f3920;fill:#DFD;}
+.icodkf{stroke-width:1.2;stroke:#1f3920;fill:#1f3920;}
+.icoltf{stroke-width:1.2;stroke:#DFD;fill:transparent;}
+</style></defs>
+<path d="M 2 2, 12 2, 12 12, 2 12 Z" class="icodke" />
+<line x1="2" y1="2" x2="12" y2="12" class="icodkf" />
+<line x1="2" y1="12" x2="12" y2="2" class="icodkf" />
+<path d="M 3 3, 11 3, 11 11, 3 11 Z" class="icoltf" />
+</svg>
